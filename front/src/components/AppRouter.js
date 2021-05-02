@@ -5,26 +5,40 @@ import {Switch, Route, Redirect} from 'react-router-dom'
 import { authRoutes } from '../routes';
 import { publicRoutes } from '../routes'
 
+import {AUTH_PAGE} from '../utils/consts'
 
-const DevicePage = () => {
-   // const {user} = false; redux 
+
+//redux 
+import { connect } from "react-redux";
+
+const AppRouter = (props) => { 
+   // const {user} = false; 
+   const { isLoggedIn } = props; //  redux
 
     let isAuth = false;
 
-    console.log(isAuth);
+    console.log(isLoggedIn);
 
     return(
         <Switch>
             {/* {user.isAuth === true && authRoutes.map(({path, Component}) =>  */}
-            {isAuth === true && authRoutes.map(({path, Component}) => 
+            {isLoggedIn === true && authRoutes.map(({path, Component}) => 
                 <Route key={path} path={path} component={Component} exact/>
             )}
             {publicRoutes.map(({path, Component}) => 
                 <Route key={path} path={path} component={Component} exact/>
             )}
-            {/* <Redirect to={AUTH_ROUTE}/> */}
+            <Redirect to={AUTH_PAGE}/>  {/*перенаправление на страницу регистрации/авторизации еслии пользователь !auth */}
         </Switch>
     )
 }
 
-export default DevicePage;
+function mapStateToProps(state){
+    const { isLoggedIn } = state.auth;
+    return {
+        isLoggedIn,
+    }
+}
+
+
+export default connect(mapStateToProps)(AppRouter)

@@ -1,0 +1,59 @@
+@import 'components/all';
+
+// .card{
+//     width: 400px;
+// }
+
+.login_model-content{
+    padding: 20px;
+    svg{
+        width: 20px;
+        height: 20px;
+    }
+    svg:hover{
+        cursor: pointer;
+    }
+    .login_model-close{
+        display: flex;
+        justify-content: flex-end;
+        padding: 5px;
+    }
+}
+
+.modal-content{
+    width: 500px;
+}
+
+.auth-container{
+    min-height: 800px;
+    // border: 4px double Aqua;
+    border-radius: 10px;
+}
+
+.modal-auth_menu{
+    margin-top: 50px;
+    width: 300px;
+    // padding: 20px;
+    // border: 4px double Aqua;
+    border-radius: 10px;
+    height: 10em;
+    justify-content: space-between;
+    background-image: url(../assets/img/tvImg.png);
+    box-sizing: content-box;
+}
+
+.auth_menuBtn1{
+    button{
+    margin-top: 40px;
+    }
+}
+
+.auth_menuBtn2{
+    button{
+    margin-top: 70px
+    }
+}
+
+// .modal-auth_menuBtn{
+//     margin-top: 50px;
+// }
