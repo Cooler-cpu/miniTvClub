@@ -1,8 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
-from django.contrib.auth.models import User
-
+from users.models import Clients
 from service_packages.models import Package
 
 
@@ -29,7 +28,7 @@ class StatusPayments(models.Model):
 
 
 class Payments(models.Model):
-    user = models.ForeignKey(User, verbose_name="Клиент", on_delete=models.CASCADE) #изменить на клиента
+    user = models.ForeignKey(Clients, verbose_name="Клиент", on_delete=models.CASCADE)
     ip = models.GenericIPAddressField(verbose_name="Ip платежа")
     total_sum = models.FloatField(verbose_name="Сумма платежа")
     type_payments = models.ForeignKey(TypePayment, verbose_name="Тип платежа", on_delete=models.CASCADE)
@@ -47,6 +46,7 @@ class Payments(models.Model):
 class Orders(models.Model):
     payment = models.ForeignKey(Payments, verbose_name="Информация об платеже", on_delete=models.CASCADE )
     package = models.ManyToManyField(Package, verbose_name="Приобретенный пакет")
+    starts_with = models.DateTimeField(verbose_name="Активен с", default=timezone.now())
     valid_until = models.DateTimeField(verbose_name="Действителен до", default=timezone.now())
 
     class Meta:

@@ -34,6 +34,9 @@ INSTALLED_APPS = [
     'service_packages.apps.ServicePackagesConfig',
     'service_channels.apps.ServiceChannelsConfig',
     'service_fluss.apps.ServiceFlussConfig',
+
+    'stream.apps.StreamConfig',
+    'fluss_servers.apps.FlussServersConfig',
 ]
 
 MIDDLEWARE = [
@@ -128,3 +131,5 @@ STATICFILES_DIRS = (
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'users.Users'
