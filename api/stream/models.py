@@ -10,7 +10,7 @@ class Stream(models.Model):
     st = [("0",'Выключен'),("1",'Включен')]
 
     name = models.SlugField(verbose_name="Название стрима")
-    sourse = models.CharField(verbose_name="Поток на канал", blank=True, max_length=120)
+    sourse = models.CharField(verbose_name="Поток на канал", max_length=120)
     fluss_server = models.ForeignKey(Servers, verbose_name="Сервер", on_delete=models.CASCADE)
     data_create = models.DateTimeField(verbose_name="Дата создание стрима", default=now)
     status = models.CharField(verbose_name="Статус", max_length=1, choices=st, default="0")
@@ -24,12 +24,16 @@ class Stream(models.Model):
 
     def clean(self):
         super(Stream, self).clean()
-        sr = StreamRequest(stream_name=self.name, server_url=self.fluss_server.fluss_url)
+        sr = StreamRequest(stream_status=self.status, stream_name=self.name, stream_sourse=self.sourse, server_url=self.fluss_server.fluss_url)
         try:
             obj = Stream.objects.get(id=self.id)
             obj_name = obj.name
+            obj_sourse = obj.sourse
+            obj_status = obj.status
         except Exception:
             obj_name = None
+            obj_sourse = None
+            obj_status = None
         
         if obj_name != self.name:
             if sr.is_exists():
@@ -39,10 +43,15 @@ class Stream(models.Model):
             answer = sr.create_stream()
             if not answer.get("success", None):
                 raise ValidationError("Произошла ошибка при создании потока")
-            self.sourse = sr.sourse_conf
+
+        if obj_sourse != self.sourse and obj_sourse != None:
+            answer = sr.change_url()
+
+        if obj_status != self.status and obj_status != None:
+            answer = sr.change_status()
 
 
     def delete(self):
         super(Stream, self).delete()
-        sr = StreamRequest(stream_name=self.name, server_url=self.fluss_server.fluss_url)
+        sr = StreamRequest(stream_status=self.status, stream_name=self.name, stream_sourse=self.sourse, server_url=self.fluss_server.fluss_url)
         sr.delete_stream()

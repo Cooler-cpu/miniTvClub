@@ -2,9 +2,11 @@ from django.contrib import admin
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
+from .views import Load
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('test', Load.as_view()),
 ]
 
 if settings.DEBUG:
