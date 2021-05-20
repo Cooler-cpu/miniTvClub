@@ -1,19 +1,19 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
-from .requests import StreamRequest
+from django_app.requests import StreamRequest
 
-from fluss_servers.models import Servers
+from fluss_pipelines.models import Pipelines
 
 
-class Stream(models.Model):
+class Streams(models.Model):
     st = [("0",'Выключен'),("1",'Включен')]
 
     name = models.SlugField(verbose_name="Название стрима")
     sourse = models.CharField(verbose_name="Поток на канал", max_length=120)
-    fluss_server = models.ForeignKey(Servers, verbose_name="Сервер", on_delete=models.CASCADE)
+    fluss_pipelines = models.ForeignKey(Pipelines, verbose_name="Пакет серверов", on_delete=models.CASCADE)
     data_create = models.DateTimeField(verbose_name="Дата создание стрима", default=now)
-    status = models.CharField(verbose_name="Статус", max_length=1, choices=st, default="0")
+    status = models.CharField(verbose_name="Статус", max_length=1, choices=st, default="1")
 
     class Meta:
         verbose_name = "Стрим"
@@ -23,10 +23,10 @@ class Stream(models.Model):
         return self.name
 
     def clean(self):
-        super(Stream, self).clean()
-        sr = StreamRequest(stream_status=self.status, stream_name=self.name, stream_sourse=self.sourse, server_url=self.fluss_server.fluss_url)
+        super(Streams, self).clean()
+        sr = StreamRequest(self)
         try:
-            obj = Stream.objects.get(id=self.id)
+            obj = Streams.objects.get(id=self.id)
             obj_name = obj.name
             obj_sourse = obj.sourse
             obj_status = obj.status
@@ -41,17 +41,21 @@ class Stream(models.Model):
             if obj_name != None:
                 sr.delete_stream()
             answer = sr.create_stream()
-            if not answer.get("success", None):
+            if not answer:
                 raise ValidationError("Произошла ошибка при создании потока")
 
         if obj_sourse != self.sourse and obj_sourse != None:
             answer = sr.change_url()
+            if not answer:
+                raise ValidationError("Произошла ошибка при смене url")
 
         if obj_status != self.status and obj_status != None:
             answer = sr.change_status()
+            if not answer:
+                raise ValidationError("Произошла ошибка при смене статуса")
 
 
     def delete(self):
-        super(Stream, self).delete()
-        sr = StreamRequest(stream_status=self.status, stream_name=self.name, stream_sourse=self.sourse, server_url=self.fluss_server.fluss_url)
+        super(Streams, self).delete()
+        sr = StreamRequest(self)
         sr.delete_stream()

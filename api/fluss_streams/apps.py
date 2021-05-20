@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class StreamConfig(AppConfig):
+class FlussStreamsConfig(AppConfig):
     verbose_name = "Стримы"
-    name = 'stream'
+    name = 'fluss_streams'

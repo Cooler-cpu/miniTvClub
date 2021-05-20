@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 
 from fluss_servers.models import Servers
-from stream.models import Stream
+from fluss_streams.models import Streams
 
 
 class Load(View):
@@ -35,15 +35,17 @@ class Load(View):
         urls = []
         for name in names:
             try:
+                print(self.config['streams'][name])
                 st = not self.config['streams'][name]['disabled']
             except:
-                st = False
+                st = True
             ur = self.config['streams'][name]['urls'][0]['url']
             status.append(st)
             urls.append(ur)
 
+        print(status)
         for i in range(0,len(names)):
-            Stream.objects.update_or_create(
+            Streams.objects.update_or_create(
                 name = names[i],
                 defaults={
                     'sourse' : urls[i],

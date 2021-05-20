@@ -28,15 +28,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'users.apps.UsersConfig',
-    'clients.apps.ClientsConfig',
-    'bonuses.apps.BonusesConfig',
-    'orders.apps.OrdersConfig',
-    'service_packages.apps.ServicePackagesConfig',
-    'service_channels.apps.ServiceChannelsConfig',
-    'service_fluss.apps.ServiceFlussConfig',
-
-    'stream.apps.StreamConfig',
+    'fluss_streams.apps.FlussStreamsConfig',
     'fluss_servers.apps.FlussServersConfig',
+    'fluss_pipelines.apps.FlussPipelinesConfig',
+    'broadcasts.apps.BroadcastsConfig',
 ]
 
 MIDDLEWARE = [
