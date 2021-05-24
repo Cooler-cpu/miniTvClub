@@ -48,10 +48,7 @@ class ArchivePipelineBroadcast(models.Model):
     
     pipeline = models.ForeignKey("fluss_pipelines.Pipelines", verbose_name="Пакет стримов", on_delete=models.CASCADE)
     name = models.CharField(verbose_name="Название архива", max_length=125, unique=True)
-    disk_limit = models.IntegerField(verbose_name="Диск лимит", default=85)
-    dvr_limit = models.IntegerField(verbose_name="Архив лимит", default=259200)
     schedule = models.ManyToManyField(Schedule, verbose_name="Расписания", blank=True)
-    root = models.CharField(verbose_name="Путь к архиву", max_length=120)
     comment = models.TextField(verbose_name="Комментарий", blank=True, null=True)
     status = models.CharField(verbose_name="Статус", max_length=1, choices=st, default="1", blank=True)
 

@@ -20,18 +20,21 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'nested_admin',
 
     'users.apps.UsersConfig',
     'fluss_streams.apps.FlussStreamsConfig',
     'fluss_servers.apps.FlussServersConfig',
     'fluss_pipelines.apps.FlussPipelinesConfig',
     'broadcasts.apps.BroadcastsConfig',
+    'site_manager.apps.SiteManagerConfig'
 ]
 
 MIDDLEWARE = [
