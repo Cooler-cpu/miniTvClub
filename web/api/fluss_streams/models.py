@@ -1,8 +1,8 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
-from django_app.requests import StreamRequest
-
+# from django_app.requests import StreamRequest
+StreamRequest = []
 from fluss_pipelines.models import Pipelines
 
 
