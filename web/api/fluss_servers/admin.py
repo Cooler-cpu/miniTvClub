@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.db import models
 
-from .models import ServerDvr, DvrPath, Servers, AuthUrl, ServerAuth, Test
+from .models import ServerDvr, DvrPath, Servers, AuthUrl, ServerAuth
 
 import nested_admin
 
@@ -34,6 +34,5 @@ class ServerAuthAdmin(nested_admin.NestedModelAdmin):
     extra = 1
 
 
-admin.site.register(Servers)
-admin.site.register(Test)
+admin.site.register(Servers, ServerAdmin)
 admin.site.register(ServerAuth, ServerAuthAdmin)

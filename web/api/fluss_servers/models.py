@@ -3,6 +3,9 @@ from django.db import models
 from fluss.service import Server
 
 from sortedm2m.fields import SortedManyToManyField
+from django.db.models.signals import post_save, m2m_changed, pre_save
+from django.db.models import signals
+from django.dispatch import receiver
 
 
 class ServerAuth(models.Model):
@@ -43,7 +46,7 @@ class Servers(models.Model):
     geoip = models.GenericIPAddressField(verbose_name="IP сервера", default="192.168.1.1")
     status = models.CharField(verbose_name="Статус", max_length=1, choices=st, default="0")
     autobalancer = models.CharField(verbose_name="Учавствует в автобалансировки", max_length=1, choices=st, default="0")
-    auth_backends = SortedManyToManyField(AuthUrl, verbose_name="Бэкенд авторизации")
+    auth_backends = SortedManyToManyField(ServerAuth, verbose_name="Бэкенд авторизации")
 
     class Meta:
         verbose_name = "Сервер"
@@ -52,6 +55,16 @@ class Servers(models.Model):
     def __str__(self):
         return self.fluss_url
 
+@receiver(m2m_changed, sender = Servers.auth_backends.through)
+def create_server(instance, **kwargs):
+    action = kwargs.pop('action', None)
+    if action == "post_add":
+        print(instance.auth_backends.all())
+
+@receiver(post_save, sender = Servers)
+def create_server2(instance, sender, **kwargs):
+    print(instance.dvr.all())
+
 
 class ServerDvr(models.Model):
     disk_limit = models.IntegerField(verbose_name="Диск лимит", default=85)
@@ -59,11 +72,19 @@ class ServerDvr(models.Model):
     server = models.OneToOneField(Servers, on_delete=models.CASCADE, related_name="dvr")
 
     def __str__(self):
-        return self.server.name
+        # return self.server.name
+        return "g"
 
     class Meta:
         verbose_name = "Архив сервера"
         verbose_name_plural = "Архив сервера"
+
+    # @receiver(post_save, sender = ServerDvr)
+    def create_server2(instance, sender, **kwargs):
+        print("hi")
+
+
+# post_save.connect(ServerDvr.create_server2, sender = ServerDvr)
 
 
 class DvrPath(models.Model):
@@ -74,5 +95,6 @@ class DvrPath(models.Model):
         return self.server_auth.server.name
 
     class Meta:
-        verbose_name = "Ссылка на бэкенд авторизацию"
-        verbose_name_plural = "Ссылки на бэкенд авторизации"
+        verbose_name = "Ссылка на диск"
+        verbose_name_plural = "Ссылки на диски"
+
