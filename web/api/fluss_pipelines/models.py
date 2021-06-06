@@ -3,7 +3,7 @@ from django.db import models
 from fluss_servers.models import Servers
 from broadcasts.models import TypeBroadcast
 
-from .pipeline_logic import create_obj
+from .pipeline_logic import update_pipeline
 
 
 class Pipelines(models.Model):
@@ -20,4 +20,4 @@ class Pipelines(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        create_obj(self)
+        update_pipeline(self)

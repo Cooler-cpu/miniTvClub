@@ -20,62 +20,86 @@ class BaseRequest:
 		return answer
 
 
+class ArchivesRequest(BaseRequest):
+    def __init__(self, login, password, url, obj):
+        pass
+
+    def update_archive(self):
+        pass
+
+
 class AuthRequest(BaseRequest):
-    def create_auth(self):
-        print(self.server_auth) #массив auth
-        print(self.server_auth[0].name)
-        print(self.server_auth[0].position)
-        print(self.server_auth[0].allow_default)
-        print(self.server_auth[0].auth_urls.all()) #массив ссылок
-        print(self.server_auth[0].auth_urls.all()[0].url) #первая ссылка массива ссылок нулевого объекта
+    def __init__(self, login, password, url, obj):
+        pass
+
+    def update_auths(self):
+        pass
 
 
+class StreamRequest(BaseRequest):
+	def __init__(self, stream_obj):
+		self.servers = stream_obj.fluss_pipelines.fluss_servers.all() #список серверов
+		self.stream_status = stream_obj.status #статус стрима
+		self.stream_sourse = stream_obj.sourse #ссыылка на стрим
+		self.stream_name = stream_obj.name #имя стрима
+		self.config = self.get_config(self.servers[0]) #конфиг одного из сервера
+		self.list_names = [item for item in self.config['streams']] #список стримов на сервере
 
-class Server(AuthRequest):
-    def __init__(self, obj):
-        self.server = obj #объект текущего сервера
-        self.server_dvr = obj.dvr #объект информации об архиве для текущего сервера
-        self.server_auth = obj.auth.all() #объект авторизации для бэкенда для текущего сервера
-        self.model = apps.get_model('fluss_servers','Servers') #модель сервера
-        # auth_urls, dvrs_urls
+	def update_stream(self):
+		pass
 
-    def is_exists(self):
-        server_id = self.server.id
-        if server_id:
-            self.get_old_server_info(server_id)
+	def is_exists(self):
+		return bool(self.stream_name in self.list_names)
 
-    def get_server(self):
-        server = self.model.objects.get(id=self.old_server_id)
-        return server
+	def create_stream(self):
+		tmp = f"{self.stream_sourse}; auth auth://catena.backend soft_limitation=true;"
+		server_conf = "{url "+ f"{tmp}" + ";}"
+		try:
+			for server in self.servers:
+				self.server_url = server.fluss_url
+				url = f'{self.server_url}/flussonic/api/config/stream_create'
+				data = f"stream {self.stream_name} {server_conf}"
+				header = self.get_headers(server.login, server.password)
+				response = requests.post(url, headers=header, data=data)
+				answer = response.json()
+		except:
+			return False
+		return True
 
-    def get_old_server_info(self, old_id):
-        self.old_server_id = old_id #id старого сервера
-        self.old_server = self.get_server() #объект старого сервера
-        self.old_server_auth = self.old_server.auth.all() #объект авторизации для бэкенда для старого сервера
-        self.old_server_dvr = self.old_server.dvr #объект информации об архиве для старого сервера
+	def delete_stream(self):
+		try:
+			for server in self.servers:
+				self.server_url = server.fluss_url
+				url = f"{self.server_url}/flussonic/api/config/stream_delete"
+				header = self.get_headers(server.login, server.password)
+				response = requests.post(url, headers=header, data=self.stream_name)
+				answer = response.json()
+		except:
+			return False
+		return True
 
-    def start(self):
-        self.create_auth()
-        # self.delete_auth(self.server)
-        # self.uppdate_auth(self.server)
+	def change_url(self):
+		try:
+			for server in self.servers:
+				self.server_url = server.fluss_url
+				url = f'{self.server_url}/flussonic/api/modify_config?async=true'
+				self.config['streams'].get(self.stream_name)['urls'][0]['url'] = self.stream_sourse
+				header = self.get_headers(server.login, server.password)
+				response = requests.post(url, headers=header, data = json.dumps(self.config))
+				answer = response.json()
+		except:
+			return False
+		return True
 
-
-        # auth_same = self.compare_objects(self.server_auth, self.old_server_auth)
-        # print(auth_same)
-        # if not self.old_server_id or not auth_same:
-            # print('goo')
-
-    # def compare_objects(self, obj1, obj2):
-        # try:
-        # for i in range(obj1.count()):
-        #     values = [(k,v) for k,v in obj1[i].__dict__.items() if k != '_state']
-        #     other_values = [(k,v) for k,v in obj2[i].__dict__.items() if k != '_state']
-        #     if not values == other_values:
-        #         return False
-        # except:
-            # return False
-        # return True
-        # return (obj1.__dist__ == obj2.__dist__)
-        # values = [(k,v) for k,v in obj1.__dict__.items() if k != '_state']
-        # other_values = [(k,v) for k,v in obj2.__dict__.items() if k != '_state']
-        # return values == other_values
+	def change_status(self):
+		try:
+			for server in self.servers:
+				self.server_url = server.fluss_url
+				url = f'{self.server_url}/flussonic/api/modify_config?async=true'
+				self.config['streams'].get(self.stream_name)['disabled'] = not bool(int(self.stream_status))
+				header = self.get_headers(server.login, server.password)
+				response = requests.post(url, headers=header, data = json.dumps(self.config))
+				answer = response.json()
+		except:
+			return False
+		return True
