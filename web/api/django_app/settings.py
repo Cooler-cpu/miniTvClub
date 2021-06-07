@@ -34,7 +34,6 @@ INSTALLED_APPS = [
     'fluss_streams.apps.FlussStreamsConfig',
     'fluss_servers.apps.FlussServersConfig',
     'fluss_pipelines.apps.FlussPipelinesConfig',
-    'broadcasts.apps.BroadcastsConfig',
     'site_manager.apps.SiteManagerConfig'
 ]
 

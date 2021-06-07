@@ -24,7 +24,7 @@ class Streams(models.Model):
     def clean(self):
         super(Streams, self).clean()
         sr = StreamRequest(self)
-        sr.update_stream(self)
+        sr.update_stream()
 
     # def delete(self):
     #     super(Streams, self).delete()
