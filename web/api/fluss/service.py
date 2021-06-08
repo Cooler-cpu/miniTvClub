@@ -102,7 +102,11 @@ class StreamRequest(BaseRequest):
 			stream['auth']['url'] = f"auth://{server.auth_backends.all().first().name}"
 			stream['name'] = self.stream_name
 			config['streams'][self.stream_name] = stream
+<<<<<<< HEAD
 			if server in self.archive_servers:
+=======
+			if self.pipeline.is_archives:
+>>>>>>> 8c84426f2dea8aceac5d0df017bbf8d35aade842
 				stream['dvr'] = {"reference":server.dvr.all().first().name}
 			config['streams'][self.stream_name]['urls'] = [{'url':self.stream_sourse}]
 			self.send_config(server, config)
