@@ -98,7 +98,7 @@ class StreamRequest(BaseRequest):
 			stream = {}
 			stream['auth'] = {}
 			stream['auth']['soft_limitation'] = True
-			stream['auth']['url'] = server.auth_backends.all().first().auth_urls.all().first().url
+			stream['auth']['url'] = f"auth://{server.auth_backends.all().first().name}"
 			stream['name'] = self.stream_name
 			config['streams'][self.stream_name] = stream
 			if self.pipeline.is_archives:
