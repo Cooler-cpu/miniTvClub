@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 from fluss.service import StreamRequest
 from fluss_pipelines.models import Pipelines
+from fluss_servers.models import Servers
 
 
 class Streams(models.Model):
@@ -12,6 +13,7 @@ class Streams(models.Model):
     sourse = models.CharField(verbose_name="Поток на канал", max_length=120)
     fluss_pipelines = models.ForeignKey(Pipelines, verbose_name="Пакет серверов", on_delete=models.CASCADE)
     data_create = models.DateTimeField(verbose_name="Дата создание стрима", default=now)
+    servers_archive = models.ManyToManyField(Servers, verbose_name="Список серверов")
     status = models.CharField(verbose_name="Статус", max_length=1, choices=st, default="1")
 
     class Meta:
@@ -21,8 +23,8 @@ class Streams(models.Model):
     def __str__(self):
         return self.name
 
-    def clean(self):
-        super(Streams, self).clean()
+    def save(self):
+        super(Streams, self).save()
         sr = StreamRequest(self)
         sr.update_stream()
 

@@ -90,6 +90,7 @@ class StreamRequest(BaseRequest):
 		self.servers = stream_obj.fluss_pipelines.fluss_servers.all() #список серверов
 		self.stream_name = stream_obj.name #имя стрима
 		self.stream_sourse = stream_obj.sourse #ссылка на стрим
+		self.archive_servers = stream_obj.servers_archive.all() #сервера для которых нужен архив
 
 	def update_stream(self):
 		for server in self.servers:
@@ -98,13 +99,14 @@ class StreamRequest(BaseRequest):
 			stream = {}
 			stream['auth'] = {}
 			stream['auth']['soft_limitation'] = True
-			stream['auth']['url'] = server.auth_backends.all().first().auth_urls.all().first().url
+			stream['auth']['url'] = f"auth://{server.auth_backends.all().first().name}"
 			stream['name'] = self.stream_name
 			config['streams'][self.stream_name] = stream
-			if self.pipeline.is_archives:
-				stream['dvr'] = {"root":server.dvr.all().first().root}
+			if server in self.archive_servers:
+				stream['dvr'] = {"reference":server.dvr.all().first().name}
 			config['streams'][self.stream_name]['urls'] = [{'url':self.stream_sourse}]
 			self.send_config(server, config)
+	
 
 	# def delete_stream(self):
 	# 	try:

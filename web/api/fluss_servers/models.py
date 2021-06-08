@@ -52,7 +52,7 @@ class Servers(models.Model):
         verbose_name_plural = "Сервера"
 
     def __str__(self):
-        return self.fluss_url
+        return f"{self.name} - {self.fluss_url}"
 
 
 class ServerDvr(models.Model):
