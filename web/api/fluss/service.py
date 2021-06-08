@@ -34,6 +34,7 @@ class ArchivesRequest(BaseRequest):
 
 	def update_archive(self):
 		config = self.get_config(self.server)
+		config_dvrs = config.get("dvrs", {})
 		dvrs = {}
 		for obj in self.obj:
 			dvrs[obj.name] = {}
@@ -47,8 +48,14 @@ class ArchivesRequest(BaseRequest):
 			dvrs[obj.name]['schedule'] = []
 			for item in obj.dvr_schedule.all():
 				dvrs[obj.name]['schedule'].append( [item.start, item.end] )
+		self.delete_olds(config_dvrs, dvrs, self.server)
 		config['dvrs'] = dvrs
 		self.send_config(self.server, config)
+
+	def delete_olds(self, old_config, new_config, server):
+		#Получаешь старую и новую часть конфига с DVRS и сервер
+		#Нужно отправить запросы на удаление DVR, если какой-то DVR есть в старом, но нет в новом
+		pass 
 
 
 class AuthRequest(BaseRequest):
@@ -58,6 +65,7 @@ class AuthRequest(BaseRequest):
 
 	def update_auths(self):
 		config = self.get_config(self.server)
+		config_auth = config.get("auth_backends", {})
 		auth_backends = {}
 		for obj in self.obj:
 			auth_backends[obj.name] = {}
@@ -66,14 +74,22 @@ class AuthRequest(BaseRequest):
 			for item in obj.auth_urls.all():
 				auth_backends[obj.name]['backends'].append( {'url':item.url} )
 			auth_backends[obj.name]['name'] = obj.name
+		self.delete_olds(config_auth, auth_backends, self.server)
 		config['auth_backends'] = auth_backends
 		self.send_config(self.server, config)
+
+	def delete_olds(self, old_config, new_config, server):
+		#Получаешь старую и новую часть конфига с AUTH и сервер
+		#Нужно отправить запросы на удаление AUTH, если какой-то AUTH есть в старом, но нет в новом
+		pass
 
 
 class StreamRequest(BaseRequest):
 	def __init__(self, stream_obj):
+		self.pipeline = stream_obj.fluss_pipelines #пакет стримов
 		self.servers = stream_obj.fluss_pipelines.fluss_servers.all() #список серверов
 		self.stream_name = stream_obj.name #имя стрима
+		self.stream_sourse = stream_obj.sourse #ссылка на стрим
 
 	def update_stream(self):
 		for server in self.servers:
@@ -85,8 +101,10 @@ class StreamRequest(BaseRequest):
 			stream['auth']['url'] = server.auth_backends.all().first().auth_urls.all().first().url
 			stream['name'] = self.stream_name
 			config['streams'][self.stream_name] = stream
-			if server.is_archives:
+			if self.pipeline.is_archives:
+				print("hi")
 				stream['dvr'] = {"root":server.dvr.all().first().root}
+			config['streams'][self.stream_name]['urls'] = [{'url':self.stream_sourse}]
 			self.send_config(server, config)
 
 	# def delete_stream(self):
