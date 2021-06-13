@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.db import models
+from django.db.models import fields
 
 from .models import ServerDvr, DvrPath, Servers, AuthUrl, ServerAuth, Schedule
 
@@ -16,16 +17,15 @@ class ScheduleInline(nested_admin.NestedTabularInline):
     extra = 0
 
 
-class ServerDvrInline(nested_admin.NestedTabularInline):
+class ServerDvrInline(nested_admin.NestedModelAdmin):
     inlines = [DvrPathInline, ScheduleInline]
     model = ServerDvr
-    extra = 0
+    fields = ("name", "root", "disk_limit", "dvr_limit", "comment")
 
-
-class ServerAdmin(nested_admin.NestedModelAdmin):
-    inlines = [ServerDvrInline]
-    model = Servers
-    extra = 0
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return ['name']
+        return self.readonly_fields
 
 
 class AuthUrlInline(nested_admin.NestedTabularInline):
@@ -39,5 +39,6 @@ class ServerAuthAdmin(nested_admin.NestedModelAdmin):
     extra = 0
 
 
-admin.site.register(Servers, ServerAdmin)
+admin.site.register(Servers)
 admin.site.register(ServerAuth, ServerAuthAdmin)
+admin.site.register(ServerDvr, ServerDvrInline)

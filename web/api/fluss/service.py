@@ -36,26 +36,20 @@ class ArchivesRequest(BaseRequest):
 		config = self.get_config(self.server)
 		config_dvrs = config.get("dvrs", {})
 		dvrs = {}
-		for obj in self.obj:
-			dvrs[obj.name] = {}
-			dvrs[obj.name]['disk_limit'] = obj.disk_limit
-			dvrs[obj.name]['dvr_limit'] = obj.dvr_limit
-			dvrs[obj.name]['name'] = obj.name
-			dvrs[obj.name]['root'] = obj.name + "/" + obj.root
-			dvrs[obj.name]['disks'] = {}
-			for item in obj.dvr_urls.all():
-				dvrs[obj.name]['disks'][item.url] = {}
-			dvrs[obj.name]['schedule'] = []
-			for item in obj.dvr_schedule.all():
-				dvrs[obj.name]['schedule'].append( [item.start, item.end] )
+		dvrs[self.obj.name] = {}
+		dvrs[self.obj.name]['disk_limit'] = self.obj.disk_limit
+		dvrs[self.obj.name]['dvr_limit'] = self.obj.dvr_limit
+		dvrs[self.obj.name]['name'] = self.obj.name
+		dvrs[self.obj.name]['root'] = self.obj.name + "/" + self.obj.root
+		dvrs[self.obj.name]['disks'] = {}
+		for item in self.obj.dvr_urls.all():
+			dvrs[self.obj.name]['disks'][item.url] = {}
+		dvrs[self.obj.name]['schedule'] = []
+		for item in self.obj.dvr_schedule.all():
+			dvrs[self.obj.name]['schedule'].append( [item.start, item.end] )
 		self.delete_olds(config_dvrs, dvrs, self.server)
 		config['dvrs'] = dvrs
 		self.send_config(self.server, config)
-
-	def delete_olds(self, old_config, new_config, server):
-		#Получаешь старую и новую часть конфига с DVRS и сервер
-		#Нужно отправить запросы на удаление DVR, если какой-то DVR есть в старом, но нет в новом
-		pass 
 
 
 class AuthRequest(BaseRequest):
@@ -102,12 +96,8 @@ class StreamRequest(BaseRequest):
 			stream['auth']['url'] = f"auth://{server.auth_backends.all().first().name}"
 			stream['name'] = self.stream_name
 			config['streams'][self.stream_name] = stream
-<<<<<<< HEAD
 			if server in self.archive_servers:
-=======
-			if self.pipeline.is_archives:
->>>>>>> 8c84426f2dea8aceac5d0df017bbf8d35aade842
-				stream['dvr'] = {"reference":server.dvr.all().first().name}
+				stream['dvr'] = {"reference":server.dvr.name}
 			config['streams'][self.stream_name]['urls'] = [{'url':self.stream_sourse}]
 			self.send_config(server, config)
 	
