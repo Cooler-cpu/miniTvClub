@@ -4,7 +4,7 @@ import json
 from requests.auth import _basic_auth_str
 
 
-class BaseRequest:
+class HeaderRequest:
 	def get_headers(self, login=None, password=None):
 		headers = {'Content-type': 'application/json',
 					'Authorization': _basic_auth_str(login, password), 
@@ -12,6 +12,8 @@ class BaseRequest:
 					'Content-Encoding': 'utf-8'}
 		return headers
 
+
+class BaseRequest(HeaderRequest):
 	def get_config(self, server):
 		url = f"{server.fluss_url}/flussonic/api/read_config"
 		header = self.get_headers(server.login, server.password)
@@ -47,7 +49,6 @@ class ArchivesRequest(BaseRequest):
 		dvrs[self.obj.name]['schedule'] = []
 		for item in self.obj.dvr_schedule.all():
 			dvrs[self.obj.name]['schedule'].append( [item.start, item.end] )
-		self.delete_olds(config_dvrs, dvrs, self.server)
 		config['dvrs'] = dvrs
 		self.send_config(self.server, config)
 
@@ -61,6 +62,8 @@ class AuthRequest(BaseRequest):
 		config = self.get_config(self.server)
 		config_auth = config.get("auth_backends", {})
 		auth_backends = {}
+		for item in config_auth:
+			auth_backends[item] = None
 		for obj in self.obj:
 			auth_backends[obj.name] = {}
 			auth_backends[obj.name]['allow_default'] = obj.allow_default
@@ -68,14 +71,8 @@ class AuthRequest(BaseRequest):
 			for item in obj.auth_urls.all():
 				auth_backends[obj.name]['backends'].append( {'url':item.url} )
 			auth_backends[obj.name]['name'] = obj.name
-		self.delete_olds(config_auth, auth_backends, self.server)
 		config['auth_backends'] = auth_backends
 		self.send_config(self.server, config)
-
-	def delete_olds(self, old_config, new_config, server):
-		#Получаешь старую и новую часть конфига с AUTH и сервер
-		#Нужно отправить запросы на удаление AUTH, если какой-то AUTH есть в старом, но нет в новом
-		pass
 
 
 class StreamRequest(BaseRequest):
@@ -100,16 +97,3 @@ class StreamRequest(BaseRequest):
 				stream['dvr'] = {"reference":server.dvr.name}
 			config['streams'][self.stream_name]['urls'] = [{'url':self.stream_sourse}]
 			self.send_config(server, config)
-	
-
-	# def delete_stream(self):
-	# 	try:
-	# 		for server in self.servers:
-	# 			self.server_url = server.fluss_url
-	# 			url = f"{self.server_url}/flussonic/api/config/stream_delete"
-	# 			header = self.get_headers(server.login, server.password)
-	# 			response = requests.post(url, headers=header, data=self.stream_name)
-	# 			answer = response.json()
-	# 	except:
-	# 		return False
-	# 	return True

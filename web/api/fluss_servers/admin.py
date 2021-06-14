@@ -37,6 +37,12 @@ class ServerAuthAdmin(nested_admin.NestedModelAdmin):
     inlines = [AuthUrlInline]
     model = ServerAuth
     extra = 0
+    fields = ("name", "allow_default")
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return ['name']
+        return self.readonly_fields
 
 
 admin.site.register(Servers)
