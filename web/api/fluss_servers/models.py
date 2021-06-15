@@ -108,13 +108,3 @@ def create_server(instance, **kwargs):
         obj_auths = instance.auth_backends.all()
         at = AuthRequest(instance, obj_auths)
         at.update_auths()
-
-
-# @receiver(m2m_changed, sender = ServerDvr)
-# def create_server2(instance, **kwargs):
-#     print('hi')
-#     action = kwargs.pop('action', None)
-#     if action == "post_add":
-#         obj_dvr = instance.dvr.all()
-#         ar = ArchivesRequest(instance, obj_dvr)
-#         ar.update_archive()
