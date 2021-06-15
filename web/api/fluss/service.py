@@ -96,7 +96,6 @@ class StreamRequest(BaseRequest):
 			if server == self.archive_servers:
 				if server.dvr:
 					stream['dvr'] = {"reference":server.dvr.name}
-
 			else:
 				stream['dvr'] = None
 			config['streams'][self.stream_name]['urls'] = [{'url':self.stream_sourse}]
