@@ -15,7 +15,7 @@ class Streams(models.Model):
     sourse = models.CharField(verbose_name="Поток на канал", max_length=120)
     fluss_pipelines = models.ForeignKey(Pipelines, verbose_name="Пакет серверов", on_delete=models.CASCADE)
     data_create = models.DateTimeField(verbose_name="Дата создание стрима", default=now)
-    servers_archive = models.ManyToManyField(Servers, verbose_name="Список серверов", blank=True, null=True)
+    servers_archive = models.ForeignKey(Servers, verbose_name="Список серверов", blank=True, null=True, on_delete=models.CASCADE)
     status = models.CharField(verbose_name="Статус", max_length=1, choices=st, default="1")
 
     class Meta:
@@ -27,9 +27,8 @@ class Streams(models.Model):
 
     def save(self):
         super(Streams, self).save()
-        if not self.servers_archive.all():
-            sr = StreamRequest(self)
-            sr.update_stream()
+        sr = StreamRequest(self)
+        sr.update_stream()
 
     # def delete(self):
     #     super(Streams, self).delete()
@@ -37,9 +36,9 @@ class Streams(models.Model):
     #     sr.delete_stream()
 
 
-@receiver(m2m_changed, sender = Streams.servers_archive.through)
-def create_server(instance, **kwargs):
-    action = kwargs.pop('action', None)
-    if action == "post_add":
-        sr = StreamRequest(instance)
-        sr.update_stream()
+# @receiver(m2m_changed, sender = Streams.servers_archive.through)
+# def create_server(instance, **kwargs):
+#     action = kwargs.pop('action', None)
+#     if action == "post_add":
+#         sr = StreamRequest(instance)
+#         sr.update_stream()
