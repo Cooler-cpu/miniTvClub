@@ -4,3 +4,4 @@ django-nested-admin==3.3.3
 django-sortedm2m==3.0.2
 django-json-field==0.5.7
 requests
+Pillow
