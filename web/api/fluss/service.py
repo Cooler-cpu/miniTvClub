@@ -2,7 +2,7 @@ from django.apps import apps
 import requests
 import json
 from requests.auth import _basic_auth_str
-
+from django.core.exceptions import ValidationError
 
 class HeaderRequest:
 	def get_headers(self, login=None, password=None):
@@ -94,8 +94,11 @@ class StreamRequest(BaseRequest):
 			stream['name'] = self.stream_name
 			config['streams'][self.stream_name] = stream
 			if server == self.archive_servers:
-				stream['dvr'] = {"reference":server.dvr.name}
+				if server.dvr:
+					stream['dvr'] = {"reference":server.dvr.name}
+
 			else:
 				stream['dvr'] = None
 			config['streams'][self.stream_name]['urls'] = [{'url':self.stream_sourse}]
+			print(config['streams'])
 			self.send_config(server, config)

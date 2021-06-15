@@ -34,7 +34,8 @@ INSTALLED_APPS = [
     'fluss_streams.apps.FlussStreamsConfig',
     'fluss_servers.apps.FlussServersConfig',
     'fluss_pipelines.apps.FlussPipelinesConfig',
-    'site_manager.apps.SiteManagerConfig'
+    'site_manager.apps.SiteManagerConfig',
+    'channels.apps.ChannelsConfig'
 ]
 
 MIDDLEWARE = [
