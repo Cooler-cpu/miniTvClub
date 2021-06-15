@@ -20,7 +20,7 @@ class ServerAuth(models.Model):
 
 
 class AuthUrl(models.Model):
-    url = models.CharField(verbose_name="Ссылка на бэкенд", max_length=120)
+    url = models.CharField(verbose_name="Название папки", max_length=120)
     server_auth = models.ForeignKey(ServerAuth, verbose_name="Бэкенд авторизация", on_delete=models.CASCADE, related_name="auth_urls")
 
     def __str__(self):
