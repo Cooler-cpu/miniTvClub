@@ -69,7 +69,7 @@ class AuthRequest(BaseRequest):
 			auth_backends[obj.name]['allow_default'] = obj.allow_default
 			auth_backends[obj.name]['backends'] = []
 			for item in obj.auth_urls.all():
-				auth_backends[obj.name]['backends'].append( {'url':item.url} )
+				auth_backends[obj.name]['backends'].append( {'url':obj.name + "/" + item.url} )
 			auth_backends[obj.name]['name'] = obj.name
 		config['auth_backends'] = auth_backends
 		self.send_config(self.server, config)
@@ -95,5 +95,7 @@ class StreamRequest(BaseRequest):
 			config['streams'][self.stream_name] = stream
 			if server in self.archive_servers:
 				stream['dvr'] = {"reference":server.dvr.name}
+			else:
+				stream['dvr'] = None
 			config['streams'][self.stream_name]['urls'] = [{'url':self.stream_sourse}]
 			self.send_config(server, config)
