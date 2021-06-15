@@ -81,7 +81,7 @@ class StreamRequest(BaseRequest):
 		self.servers = stream_obj.fluss_pipelines.fluss_servers.all() #список серверов
 		self.stream_name = stream_obj.name #имя стрима
 		self.stream_sourse = stream_obj.sourse #ссылка на стрим
-		self.archive_servers = stream_obj.servers_archive.all() #сервера для которых нужен архив
+		self.archive_servers = stream_obj.servers_archive #сервер с архивом
 
 	def update_stream(self):
 		for server in self.servers:
@@ -93,7 +93,7 @@ class StreamRequest(BaseRequest):
 			stream['auth']['url'] = f"auth://{server.auth_backends.all().first().name}"
 			stream['name'] = self.stream_name
 			config['streams'][self.stream_name] = stream
-			if server in self.archive_servers:
+			if server == self.archive_servers:
 				stream['dvr'] = {"reference":server.dvr.name}
 			else:
 				stream['dvr'] = None
