@@ -38,9 +38,3 @@ class Streams(models.Model):
     #     sr.delete_stream()
 
 
-# @receiver(m2m_changed, sender = Streams.servers_archive.through)
-# def create_server(instance, **kwargs):
-#     action = kwargs.pop('action', None)
-#     if action == "post_add":
-#         sr = StreamRequest(instance)
-#         sr.update_stream()
