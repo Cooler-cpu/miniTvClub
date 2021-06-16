@@ -42,7 +42,7 @@ class ArchivesRequest(BaseRequest):
 		dvrs[self.obj.name]['disk_limit'] = self.obj.disk_limit
 		dvrs[self.obj.name]['dvr_limit'] = self.obj.dvr_limit
 		dvrs[self.obj.name]['name'] = self.obj.name
-		dvrs[self.obj.name]['root'] = self.obj.name + "/" + self.obj.root
+		dvrs[self.obj.name]['root'] = self.obj.root
 		dvrs[self.obj.name]['disks'] = {}
 		for item in self.obj.dvr_urls.all():
 			dvrs[self.obj.name]['disks'][item.url] = {}
@@ -69,7 +69,7 @@ class AuthRequest(BaseRequest):
 			auth_backends[obj.name]['allow_default'] = obj.allow_default
 			auth_backends[obj.name]['backends'] = []
 			for item in obj.auth_urls.all():
-				auth_backends[obj.name]['backends'].append( {'url':obj.name + "/" + item.url} )
+				auth_backends[obj.name]['backends'].append( {'url':item.url} )
 			auth_backends[obj.name]['name'] = obj.name
 		config['auth_backends'] = auth_backends
 		self.send_config(self.server, config)
