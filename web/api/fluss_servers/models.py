@@ -20,7 +20,7 @@ class ServerAuth(models.Model):
 
 
 class AuthUrl(models.Model):
-    url = models.CharField(verbose_name="Название папки", max_length=120)
+    url = models.CharField(verbose_name="Ссылка на бэкенд", max_length=120)
     server_auth = models.ForeignKey(ServerAuth, verbose_name="Бэкенд авторизация", on_delete=models.CASCADE, related_name="auth_urls")
 
     def __str__(self):
@@ -33,7 +33,7 @@ class AuthUrl(models.Model):
 
 class ServerDvr(models.Model):
     name = models.CharField(verbose_name="Название архива", max_length=125, unique=True)
-    root = models.CharField(verbose_name="Путь к диску", max_length=125, unique=True, default="root")
+    root = models.CharField(verbose_name="Путь к архиву", max_length=125, unique=True, default="root")
     disk_limit = models.IntegerField(verbose_name="Диск лимит", default=85)
     dvr_limit = models.IntegerField(verbose_name="Архив лимит", default=259200)
     comment = models.TextField(verbose_name="Комментарий", blank=True, null=True)
