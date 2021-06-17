@@ -9,3 +9,10 @@ def validate_archive_server(value):
         raise ValidationError("Архив на данном сервере отсутствует")
     else:
         return value
+
+      
+def validate_piplenes(value):
+  if len(value) < 1:
+    raise ValidationError("Пайплайн не может быть пустым")
+  else:
+    return value
