@@ -103,3 +103,9 @@ class StreamRequest(BaseRequest):
 			config['streams'][self.stream_name]['urls'] = [{'url':self.stream_sourse}]
 			print(config['streams'])
 			self.send_config(server, config)
+			
+	def delete_stream(self):
+		for server in self.servers:
+			config = self.get_config(server)
+			config['streams'][self.stream_name] = None
+			self.send_config(server, config)
