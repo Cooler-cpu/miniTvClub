@@ -87,7 +87,7 @@ class Servers(models.Model):
     status = models.CharField(verbose_name="Статус", max_length=1, choices=st, default="0")
     autobalancer = models.CharField(verbose_name="Учавствует в автобалансировки", max_length=1, choices=st, default="0")
     auth_backends = SortedManyToManyField(ServerAuth, verbose_name="Бэкенд авторизации")
-    dvr = models.ForeignKey(ServerDvr, on_delete=models.CASCADE, null=True, blank=True, verbose_name="Архив")
+    dvr = models.ForeignKey(ServerDvr, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Архив")
 
     class Meta:
         verbose_name = "Сервер"
