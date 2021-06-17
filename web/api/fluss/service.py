@@ -38,6 +38,8 @@ class ArchivesRequest(BaseRequest):
 		config = self.get_config(self.server)
 		config_dvrs = config.get("dvrs", {})
 		dvrs = {}
+                for item in config_dvrs:
+                        dvrs[item] = None
 		dvrs[self.obj.name] = {}
 		dvrs[self.obj.name]['disk_limit'] = self.obj.disk_limit
 		dvrs[self.obj.name]['dvr_limit'] = self.obj.dvr_limit
