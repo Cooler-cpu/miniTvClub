@@ -1,12 +1,10 @@
 from django.db import models
-from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 from fluss.service import StreamRequest
 from fluss_pipelines.models import Pipelines
 from fluss_servers.models import Servers
-from django.db.models.signals import m2m_changed
-from django.dispatch import receiver
-
+# from django.db.models.signals import pre_delete
+# from django.dispatch.dispatcher import receiver
 from .validators import validate_archive_server, validate_piplenes
 
 
@@ -32,9 +30,8 @@ class Streams(models.Model):
         sr = StreamRequest(self)
         sr.update_stream()
 
-    def delete(self):
-        super(Streams, self).delete()
-        sr = StreamRequest(self)
-        sr.delete_stream()
 
-
+# @receiver(pre_delete, sender=Streams)
+# def streams_delete(sender, instance, **kwargs):
+#     sr = StreamRequest(instance)
+#     sr.delete_stream()

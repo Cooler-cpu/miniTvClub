@@ -2,6 +2,8 @@
 from django.core.exceptions import ValidationError
 
 from fluss_servers.models import Servers
+from fluss_pipelines.models import Pipelines
+
 
 def validate_archive_server(value):
     server = Servers.objects.get(id=value)
@@ -12,7 +14,8 @@ def validate_archive_server(value):
 
       
 def validate_piplenes(value):
-  if len(value) < 1:
+  pipeline = Pipelines.objects.get(id=value)
+  if len(pipeline.fluss_servers.all()) < 1:
     raise ValidationError("Пайплайн не может быть пустым")
   else:
     return value

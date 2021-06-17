@@ -30,51 +30,54 @@ class BaseRequest(HeaderRequest):
 
 
 class ArchivesRequest(BaseRequest):
-	def __init__(self, server, obj):
-		self.server = server
-		self.obj = obj
+	def __init__(self, servers):
+		self.servers = servers
 
 	def update_archive(self):
-		config = self.get_config(self.server)
-		config_dvrs = config.get("dvrs", {})
-		dvrs = {}
-                for item in config_dvrs:
-                        dvrs[item] = None
-		dvrs[self.obj.name] = {}
-		dvrs[self.obj.name]['disk_limit'] = self.obj.disk_limit
-		dvrs[self.obj.name]['dvr_limit'] = self.obj.dvr_limit
-		dvrs[self.obj.name]['name'] = self.obj.name
-		dvrs[self.obj.name]['root'] = self.obj.root
-		dvrs[self.obj.name]['disks'] = {}
-		for item in self.obj.dvr_urls.all():
-			dvrs[self.obj.name]['disks'][item.url] = {}
-		dvrs[self.obj.name]['schedule'] = []
-		for item in self.obj.dvr_schedule.all():
-			dvrs[self.obj.name]['schedule'].append( [item.start, item.end] )
-		config['dvrs'] = dvrs
-		self.send_config(self.server, config)
+		for server in self.servers:
+			config = self.get_config(server)
+			config_dvrs = config.get("dvrs", {})
+			dvrs = {}
+			for item in config_dvrs:
+				dvrs[item] = None
+			obj = server.dvr
+			if obj:
+				dvrs[obj.name] = {}
+				dvrs[obj.name]['disk_limit'] = obj.disk_limit
+				dvrs[obj.name]['dvr_limit'] = obj.dvr_limit
+				dvrs[obj.name]['name'] = obj.name
+				dvrs[obj.name]['root'] = obj.root
+				dvrs[obj.name]['disks'] = {}
+				for item in obj.dvr_urls.all():
+					dvrs[obj.name]['disks'][item.url] = {}
+				dvrs[obj.name]['schedule'] = []
+				for item in obj.dvr_schedule.all():
+					dvrs[obj.name]['schedule'].append( [item.start, item.end] )
+			config['dvrs'] = dvrs
+			self.send_config(server, config)
 
 
 class AuthRequest(BaseRequest):
-	def __init__(self, server, obj):
-		self.server = server
-		self.obj = obj
+	def __init__(self, servers):
+		self.servers = servers
 
 	def update_auths(self):
-		config = self.get_config(self.server)
-		config_auth = config.get("auth_backends", {})
-		auth_backends = {}
-		for item in config_auth:
-			auth_backends[item] = None
-		for obj in self.obj:
-			auth_backends[obj.name] = {}
-			auth_backends[obj.name]['allow_default'] = obj.allow_default
-			auth_backends[obj.name]['backends'] = []
-			for item in obj.auth_urls.all():
-				auth_backends[obj.name]['backends'].append( {'url':item.url} )
-			auth_backends[obj.name]['name'] = obj.name
-		config['auth_backends'] = auth_backends
-		self.send_config(self.server, config)
+		for server in self.servers:
+			auths = server.auth_backends.all()
+			config = self.get_config(server)
+			config_auth = config.get("auth_backends", {})
+			auth_backends = {}
+			for item in config_auth:
+				auth_backends[item] = None
+			for obj in auths:
+				auth_backends[obj.name] = {}
+				auth_backends[obj.name]['allow_default'] = obj.allow_default
+				auth_backends[obj.name]['backends'] = []
+				for item in obj.auth_urls.all():
+					auth_backends[obj.name]['backends'].append( {'url':item.url} )
+				auth_backends[obj.name]['name'] = obj.name
+			config['auth_backends'] = auth_backends
+			self.send_config(server, config)
 
 
 class StreamRequest(BaseRequest):

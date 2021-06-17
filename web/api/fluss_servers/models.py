@@ -18,6 +18,19 @@ class ServerAuth(models.Model):
         verbose_name = "Бэкенд авторизация"
         verbose_name_plural = "Бэкенд авторизации"
 
+    # def clean(self):
+    #     list_servers = Servers.objects.filter(auth_backends__in=[self])
+    #     at = AuthRequest(list_servers)
+    #     at.update_auths()
+    #     super(ServerAuth, self).clean()
+
+
+    # def delete(self):
+    #     super(ServerAuth, self).delete()
+    #     list_servers = Servers.objects.filter(auth_backends__in=[self])
+    #     at = AuthRequest(list_servers)
+    #     at.update_auths()
+
 
 class AuthUrl(models.Model):
     url = models.CharField(verbose_name="Ссылка на бэкенд", max_length=120)
@@ -100,11 +113,9 @@ class Servers(models.Model):
 @receiver(m2m_changed, sender = Servers.auth_backends.through)
 def create_server(instance, **kwargs):
     action = kwargs.pop('action', None)
+    list_servers= [instance]
     if action == "post_add":
-        if instance.dvr:
-            obj_dvr = instance.dvr
-            ar = ArchivesRequest(instance, obj_dvr)
-            ar.update_archive()
-        obj_auths = instance.auth_backends.all()
-        at = AuthRequest(instance, obj_auths)
+        ar = ArchivesRequest(list_servers)
+        ar.update_archive()
+        at = AuthRequest(list_servers)
         at.update_auths()
