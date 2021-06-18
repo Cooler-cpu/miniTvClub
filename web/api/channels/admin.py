@@ -7,6 +7,9 @@ from adminsortable2.admin import SortableAdminMixin
 class ChannelsAdmin(SortableAdminMixin, admin.ModelAdmin):
   pass
 
+class EpgAdmin(SortableAdminMixin, admin.ModelAdmin):
+  pass
+
 admin.site.register(Channels, ChannelsAdmin)
-admin.site.register(Epg)
+admin.site.register(Epg, EpgAdmin)
 # Register your models here.
