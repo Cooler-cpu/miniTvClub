@@ -11,7 +11,7 @@ from .validators import validate_epgshift, validate_arhivedays
 from categories.models import Categories, Languages
 # from languages.models import Languages
 
-from django_app.utils.models_utils import get_ordering_field
+from utils.models_utils import get_ordering_field
 
 
 class Epg(models.Model):
