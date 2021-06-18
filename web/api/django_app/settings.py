@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'nested_admin',
     'sortedm2m',
+    'adminsortable2',
 
     'users.apps.UsersConfig',
     'fluss_streams.apps.FlussStreamsConfig',
