@@ -11,18 +11,22 @@ from .validators import validate_epgshift, validate_arhivedays
 from categories.models import Categories, Languages
 # from languages.models import Languages
 
+from django_app.utils.models_utils import get_ordering_field
+
+
 class Epg(models.Model):
     name = models.CharField(verbose_name="Название поставщика телепрограммы", max_length=120, null = True)
     sourse = models.CharField(verbose_name="Поток на канал", max_length=120, null = True)
     epg_user = models.ForeignKey(Users, verbose_name="Создатель epg", on_delete=models.CASCADE, null = True)
     url = models.CharField(verbose_name="Адрес на телепрограмму", max_length=120, null = True)
     comment = models.TextField(verbose_name="Комментарий", blank=True, null=True)
-    sort = models.IntegerField(verbose_name="Последовательность отображения", null = True)
+    ordering = get_ordering_field()
 
 
     class Meta:
         verbose_name = "Название тв программы"
         verbose_name_plural = "Название тв программ"
+        ordering = ['ordering']
 
     def __str__(self):
         return self.name
@@ -45,11 +49,12 @@ class Channels(models.Model):
     status = models.CharField(verbose_name="Статус", max_length=1, choices=st, default="1", null = True)
     censored = models.CharField(verbose_name="Статус", max_length=1, choices=st, default="1", null = True)
     comment = models.TextField(verbose_name="Комментарий", blank=True, null=True)
-    sort = models.IntegerField(verbose_name="Последовательность отображения в плейлисте", null = True)
+    ordering = get_ordering_field()
 
     class Meta:
         verbose_name = "Канал"
         verbose_name_plural = "Каналы"
+        ordering = ['ordering']
         
     def save(self, *args, **kwards):
         super().save(*args, **kwards)
