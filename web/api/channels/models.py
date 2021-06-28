@@ -12,6 +12,7 @@ from categories.models import Categories, Languages
 
 from utils.models_utils import get_ordering_field
 
+from django.utils.timezone import now
 
 class Epg(models.Model):
     name = models.CharField(verbose_name="Название поставщика телепрограммы", max_length=120, null = True)
@@ -39,7 +40,7 @@ class Channels(models.Model):
     epg = models.ForeignKey(Epg, verbose_name="Поставщик ТВ программы", on_delete=models.CASCADE , null = True)
     epgshift = models.SmallIntegerField(verbose_name="Смещение времени ТВ программы канала(часы)", validators=[validate_epgshift],  null = True)
     arhivedays = models.SmallIntegerField(verbose_name="Количество дней записи архива", validators=[validate_arhivedays],  null = True)
-    catchup = models.BooleanField(verbose_name="catchup", default=True);
+    catchup = models.BooleanField(verbose_name="catchup", default=True)
     categories = models.ForeignKey(Categories, verbose_name="Категория", on_delete=models.CASCADE, null = True)
     languages = models.ForeignKey(Languages, verbose_name="Язык трансялции", on_delete=models.CASCADE, null = True)
     price = models.FloatField(verbose_name="Цена канала", null = True)
@@ -66,3 +67,25 @@ class Channels(models.Model):
     def __str__(self):
         return self.name
     
+
+
+class Packets(models.Model):
+    st = [("0",'Для админа'),("1",'Для пользователя'), ("3", 'Тестовый для новых пользователей')]
+
+    user = models.ForeignKey(Users, verbose_name="Создатель пакета", on_delete=models.CASCADE)
+    name = models.CharField(verbose_name="Имя пакета", max_length=50, null = True)
+    channels = models.ManyToManyField(Channels, verbose_name="Каналы")
+    price = models.FloatField(verbose_name="Цена", null = True)
+    date = models.DateTimeField(verbose_name="Дата создания", default=now, null = True)
+    last_time_use = models.DateTimeField(verbose_name="Дата последнего использования(просмотра)", null = True)
+    type_packet = models.CharField(verbose_name="Тип", max_length=1, choices=st, default="0", null = True)
+    period_day = models.IntegerField(verbose_name="Период действительности(дни)", default=30, null = True)
+    ordering = get_ordering_field()
+
+    class Meta:
+        verbose_name = "Пакет"
+        verbose_name_plural = "Пакеты"
+        ordering = ['ordering']
+        
+    def __str__(self):
+        return self.name

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Channels, Epg
+from .models import Channels, Epg, Packets
 
 from adminsortable2.admin import SortableAdminMixin
 
@@ -10,6 +10,10 @@ class ChannelsAdmin(SortableAdminMixin, admin.ModelAdmin):
 class EpgAdmin(SortableAdminMixin, admin.ModelAdmin):
   pass
 
+class PacketsAdmin(SortableAdminMixin, admin.ModelAdmin):
+  pass
+
+
 admin.site.register(Channels, ChannelsAdmin)
 admin.site.register(Epg, EpgAdmin)
-# Register your models here.
+admin.site.register(Packets, PacketsAdmin)
