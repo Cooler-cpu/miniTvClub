@@ -5,11 +5,12 @@ from adminsortable2.admin import SortableAdminMixin
 
 
 class ChannelsAdmin(SortableAdminMixin, admin.ModelAdmin):
-  pass
+  list_display = ("id","name", "stream")
+
 
 class EpgAdmin(SortableAdminMixin, admin.ModelAdmin):
   pass
 
+
 admin.site.register(Channels, ChannelsAdmin)
 admin.site.register(Epg, EpgAdmin)
-# Register your models here.
