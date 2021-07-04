@@ -5,10 +5,12 @@ from adminsortable2.admin import SortableAdminMixin
 
 
 class ChannelsAdmin(SortableAdminMixin, admin.ModelAdmin):
-  pass
+  list_display = ("id","name", "stream")
+
 
 class EpgAdmin(SortableAdminMixin, admin.ModelAdmin):
   pass
+
 
 class PacketsAdmin(SortableAdminMixin, admin.ModelAdmin):
   pass

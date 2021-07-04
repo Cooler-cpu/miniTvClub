@@ -2,7 +2,6 @@ from django.db import models
 from django.shortcuts import reverse
 from django.db.models.signals import post_save
 
-
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.base_user import BaseUserManager
@@ -41,11 +40,16 @@ class UserManager(BaseUserManager):
 
 
 class Users(AbstractBaseUser, PermissionsMixin):
+    st = [("0",'Выключен'),("1",'Включен')]
+
     email = models.EmailField('Почта', unique=True)
     first_name = models.CharField('Имя', max_length=30, blank=True, default="Анонимный")
     last_name = models.CharField('Фамилия', max_length=30, blank=True, default="пользователь")
     bithday = models.DateTimeField("Дата рождения", null=True, blank=True)
     date_joined = models.DateTimeField('Дата регистрации', auto_now_add=True)
+    mail_tempkey = models.CharField("Временный ключ", max_length=30)
+#     token = 
+    status = models.CharField(verbose_name="Статус", max_length=1, choices=st, default="0")
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
 
@@ -64,20 +68,3 @@ class Users(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return f"{self.get_full_name()}"
-
-
-class Clients(models.Model):
-    user = models.OneToOneField(Users, verbose_name="Пользователь", on_delete=models.CASCADE, related_name="client")
-
-    def __str__(self):
-        return f"{self.user}"
-
-    def create_user_profile(sender, instance, created, **kwargs):
-        if created:
-            Clients.objects.create(user=instance)
-
-    post_save.connect(create_user_profile, sender=Users)
-
-    class Meta:
-        verbose_name = "Клиент"
-        verbose_name_plural = "Клиенты"

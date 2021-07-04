@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'site_manager.apps.SiteManagerConfig',
     'channels.apps.ChannelsConfig',
     'categories.apps.CategoriesConfig',
+    'tokens.apps.TokensConfig',
     'playlists.apps.PlaylistsConfig'
 
 ]
