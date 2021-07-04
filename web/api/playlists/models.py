@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError
 
 from .validators import validate_ipFreeConntections, validate_maxConnections
 
+from tokens.models import Token
 
 class Ips(models.Model):
     ip = models.CharField(max_length=15, verbose_name="ip", null = True)
@@ -33,7 +34,7 @@ class Playlists(models.Model):
     packets = models.ManyToManyField(Packets, verbose_name="Пакеты")
     data_start = models.DateTimeField(verbose_name="Дата с которой будет действителен", default=now, null = True)
     data_stop = models.DateTimeField(verbose_name="Дата окончания", default=now, null = True)
-    token = models.CharField(max_length=50, unique=True, default="dswirymas12346nsasqw")
+    token = models.ForeignKey(Token, verbose_name="Токен", on_delete=models.SET_NULL, null=True, blank=True)
     max_connections = models.IntegerField(verbose_name="Максимальное кол-во подключений", default=1, null = True, validators=[validate_maxConnections])
     oneip = models.CharField(verbose_name="Доступ только для одного ip", max_length=1, choices=st, default="1", null = True)
     oneipfreeconnections = models.IntegerField(verbose_name="Максимальное количество подключений с oneIp", default=1, null = True, blank = True, validators=[validate_ipFreeConntections])

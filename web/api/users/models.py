@@ -47,8 +47,8 @@ class Users(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField('Фамилия', max_length=30, blank=True, default="пользователь")
     bithday = models.DateTimeField("Дата рождения", null=True, blank=True)
     date_joined = models.DateTimeField('Дата регистрации', auto_now_add=True)
-    mail_tempkey = models.CharField("Временный ключ", max_length=30)
-#     token = 
+    mail_tempkey = models.CharField("Временный ключ", max_length=30, blank=True, null=True)
+    #token = 
     status = models.CharField(verbose_name="Статус", max_length=1, choices=st, default="0")
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
