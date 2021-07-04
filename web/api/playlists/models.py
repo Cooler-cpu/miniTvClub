@@ -44,6 +44,9 @@ class Playlists(models.Model):
         verbose_name_plural = "Плейлисты"
     
     def clean(self):
+        if(self.status == 0):
+            self.token = None
+
         if(int(self.oneip) == 0):
             self.oneipfreeconnections = None
         super(Playlists, self).clean()
