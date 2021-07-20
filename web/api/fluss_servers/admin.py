@@ -37,7 +37,12 @@ class ServerAuthAdmin(nested_admin.NestedModelAdmin):
     
     def save_related(self, request, form, formsets, change):
         super().save_related(request, form, formsets, change)
-        print(ServerAuth.objects.get(id=form.instance.id).auth_urls.all())
+        auth = ServerAuth.objects.get(id=form.instance.id)
+        servers = auth.servers_set.all()
+        at = AuthRequest(auth, servers)
+        at.test_function()
+
+
 
     def get_readonly_fields(self, request, obj=None):
         if obj:

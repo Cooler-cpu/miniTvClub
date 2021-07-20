@@ -58,8 +58,9 @@ class ArchivesRequest(BaseRequest):
 
 
 class AuthRequest(BaseRequest):
-	def __init__(self, servers):
+	def __init__(self, servers = None, changed_auth = None):
 		self.servers = servers
+		self.changed_auth = changed_auth
 
 	def update_auths(self):
 		for server in self.servers:
@@ -78,6 +79,11 @@ class AuthRequest(BaseRequest):
 				auth_backends[obj.name]['name'] = obj.name
 			config['auth_backends'] = auth_backends
 			self.send_config(server, config)
+
+	def test_function(self):
+		# servers - список серваков на которых нужно изменить auth
+		# changed_auth - сам auth
+		pass
 
 
 class StreamRequest(BaseRequest):
