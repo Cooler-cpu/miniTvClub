@@ -80,9 +80,24 @@ class AuthRequest(BaseRequest):
 			config['auth_backends'] = auth_backends
 			self.send_config(server, config)
 
+
 	def test_function(self):
 		# servers - список серваков на которых нужно изменить auth
 		# changed_auth - сам auth
+		print("flag")
+		print(self.changed_auth)
+		print(self.servers)
+
+
+		for server in self.servers:
+			
+			# for obj in server:
+				# print(obj.auth_backends.all())
+			# print(server.auth_backends.all())
+			for authBack in server.auth_backends.all():
+				print(authBack)
+			# for authBack in obj.auth_backends.all():
+			# 	print(authBack.auth_urls.all())
 		pass
 
 

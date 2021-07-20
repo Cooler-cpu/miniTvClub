@@ -1,7 +1,8 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-# from django.db.models.signals import m2m_changed, post_save
-# from django.dispatch import receiver
+
+from django.db.models.signals import m2m_changed, post_save
+from django.dispatch import receiver
 
 from sortedm2m.fields import SortedManyToManyField
 
@@ -106,12 +107,12 @@ class Servers(models.Model):
         return f"{self.name} - {self.fluss_url}"
 
 
-# @receiver(m2m_changed, sender = Servers.auth_backends.through)
-# def create_server(instance, **kwargs):
-#     action = kwargs.pop('action', None)
-#     list_servers= [instance]
-#     if action == "post_add":
-#         ar = ArchivesRequest(list_servers)
-#         ar.update_archive()
-#         at = AuthRequest(list_servers)
-#         at.update_auths()
+@receiver(m2m_changed, sender = Servers.auth_backends.through)
+def create_server(instance, **kwargs):
+    action = kwargs.pop('action', None)
+    list_servers= [instance]
+    if action == "post_add":
+        # ar = ArchivesRequest(list_servers)
+        # ar.update_archive() 
+        at = AuthRequest(list_servers)
+        at.update_auths()

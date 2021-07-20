@@ -39,7 +39,7 @@ class ServerAuthAdmin(nested_admin.NestedModelAdmin):
         super().save_related(request, form, formsets, change)
         auth = ServerAuth.objects.get(id=form.instance.id)
         servers = auth.servers_set.all()
-        at = AuthRequest(auth, servers)
+        at = AuthRequest(servers, auth)
         at.test_function()
 
 
