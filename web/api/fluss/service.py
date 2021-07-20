@@ -40,8 +40,8 @@ class ArchivesRequest(BaseRequest):
 			dvrs = {}
 			for item in config_dvrs:
 				dvrs[item] = None
-			obj = server.dvr
-			if obj:
+			objs = server.server_dvr.all()
+			for obj in objs:
 				dvrs[obj.name] = {}
 				dvrs[obj.name]['disk_limit'] = obj.disk_limit
 				dvrs[obj.name]['dvr_limit'] = obj.dvr_limit
@@ -58,9 +58,8 @@ class ArchivesRequest(BaseRequest):
 
 
 class AuthRequest(BaseRequest):
-	def __init__(self, servers = None, changed_auth = None):
+	def __init__(self, servers):
 		self.servers = servers
-		self.changed_auth = changed_auth
 
 	def update_auths(self):
 		for server in self.servers:

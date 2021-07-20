@@ -8,6 +8,8 @@ from sortedm2m.fields import SortedManyToManyField
 
 from fluss.service import ArchivesRequest, AuthRequest
 
+from django.db.models.signals import pre_delete
+
 
 class ServerAuth(models.Model):
     name = models.CharField(verbose_name="Название бэкенд авторизации", max_length=120, default="name")
@@ -54,6 +56,12 @@ class ServerDvr(models.Model):
             if old_obj[0].name != self.name:
                 raise ValidationError('Название архива запрещено менять')
         return super(ServerDvr, self).clean()
+
+    def save(self):
+        super(ServerDvr, self).save()
+        ar = ArchivesRequest(self)
+        servers = list(self.server) 
+        ar.update_archive(servers)
 
 
 class Schedule(models.Model):
@@ -112,7 +120,21 @@ def create_server(instance, **kwargs):
     action = kwargs.pop('action', None)
     list_servers= [instance]
     if action == "post_add":
-        # ar = ArchivesRequest(list_servers)
-        # ar.update_archive() 
+        ar = ArchivesRequest(list_servers)
+        ar.update_archive() 
         at = AuthRequest(list_servers)
         at.update_auths()
+
+
+@receiver(pre_delete, sender=ServerAuth)
+def auth_delete(sender, instance, **kwargs):
+    servers = instance.servers_set.all()
+    at = AuthRequest(servers)
+    at.update_auths()
+
+
+@receiver(pre_delete, sender=ServerDvr)
+def auth_delete(sender, instance, **kwargs):
+    servers = list(instance.server)
+    ar = ArchivesRequest(servers)
+    ar.update_archive() 

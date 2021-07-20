@@ -39,7 +39,7 @@ class ServerAuthAdmin(nested_admin.NestedModelAdmin):
         super().save_related(request, form, formsets, change)
         auth = ServerAuth.objects.get(id=form.instance.id)
         servers = auth.servers_set.all()
-        at = AuthRequest(servers, auth)
+        at = AuthRequest(servers)
         at.update_auths()
 
 
@@ -55,10 +55,7 @@ class ServersAdmin(nested_admin.NestedModelAdmin):
     model = Servers
     extra = 0
 
-    def save_related(self, request, form, formsets, change):
-        super().save_related(request, form, formsets, change)
-        print(Servers.objects.get(id=form.instance.id).server_dvr.all())
-
 
 admin.site.register(Servers, ServersAdmin)
 admin.site.register(ServerAuth, ServerAuthAdmin)
+admin.site.register(ServerDvr)
