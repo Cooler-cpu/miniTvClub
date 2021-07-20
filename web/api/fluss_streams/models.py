@@ -23,7 +23,7 @@ class Streams(models.Model):
         verbose_name_plural = "Стримы"
 
     def __str__(self):
-        return self.name
+        return f"{self.name} - {self.sourse}"
 
     def save(self):
         super(Streams, self).save()
