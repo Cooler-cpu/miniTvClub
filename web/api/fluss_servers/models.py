@@ -12,7 +12,7 @@ from django.db.models.signals import pre_delete
 
 
 class ServerAuth(models.Model):
-    name = models.CharField(verbose_name="Название бэкенд авторизации", max_length=120, default="name")
+    name = models.CharField(verbose_name="Название бэкенд авторизации", max_length=120, default="name", unique=True)
     allow_default = models.BooleanField(verbose_name="Разрешить, если все бэкенды вышли из строя", default=False)
 
     def __str__(self):
@@ -59,9 +59,9 @@ class ServerDvr(models.Model):
 
     def save(self):
         super(ServerDvr, self).save()
-        ar = ArchivesRequest(self)
-        servers = list(self.server) 
-        ar.update_archive(servers)
+        servers = Servers.objects.filter(name = self.server.name)
+        ar = ArchivesRequest(servers)
+        ar.update_archive()
 
 
 class Schedule(models.Model):
@@ -130,11 +130,11 @@ def create_server(instance, **kwargs):
 def auth_delete(sender, instance, **kwargs):
     servers = instance.servers_set.all()
     at = AuthRequest(servers)
-    at.update_auths()
+    at.delete_auth(instance)
 
 
 @receiver(pre_delete, sender=ServerDvr)
 def auth_delete(sender, instance, **kwargs):
-    servers = list(instance.server)
+    servers = Servers.objects.filter(name = instance.server.name)
     ar = ArchivesRequest(servers)
     ar.update_archive() 

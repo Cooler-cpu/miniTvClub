@@ -79,6 +79,18 @@ class AuthRequest(BaseRequest):
 			config['auth_backends'] = auth_backends
 			self.send_config(server, config)
 
+	def delete_auth(self, auth):
+		for server in self.servers:
+			auth_backends = server.auth_backends.all()
+			if auth_backends.get(name = auth):
+				config = self.get_config(server)
+				config_auth = config.get("auth_backends", {})
+				auth_name = auth.name
+				config_auth[auth_name] = None
+				config['auth_backends'] = config_auth
+				self.send_config(server, config)
+
+
 
 
 
