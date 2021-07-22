@@ -56,6 +56,18 @@ class ArchivesRequest(BaseRequest):
 			config['dvrs'] = dvrs
 			self.send_config(server, config)
 
+	def delete_archive(self, archive):
+		for server in self.servers:
+			archives = server.server_dvr.all()
+			if archives.get(name = archive):
+				config = self.get_config(server)
+				config_archive = config.get("dvrs", {})
+				archive_name = archive.name
+				config_archive[archive_name] = None
+				config['dvrs'] = config_archive
+				self.send_config(server, config)
+
+
 
 class AuthRequest(BaseRequest):
 	def __init__(self, servers):

@@ -115,26 +115,3 @@ class Servers(models.Model):
         return f"{self.name} - {self.fluss_url}"
 
 
-@receiver(m2m_changed, sender = Servers.auth_backends.through)
-def create_server(instance, **kwargs):
-    action = kwargs.pop('action', None)
-    list_servers= [instance]
-    if action == "post_add":
-        ar = ArchivesRequest(list_servers)
-        ar.update_archive() 
-        at = AuthRequest(list_servers)
-        at.update_auths()
-
-
-@receiver(pre_delete, sender=ServerAuth)
-def auth_delete(sender, instance, **kwargs):
-    servers = instance.servers_set.all()
-    at = AuthRequest(servers)
-    at.delete_auth(instance)
-
-
-@receiver(pre_delete, sender=ServerDvr)
-def auth_delete(sender, instance, **kwargs):
-    servers = Servers.objects.filter(name = instance.server.name)
-    ar = ArchivesRequest(servers)
-    ar.update_archive() 
