@@ -7,7 +7,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 # test
-from fluss_servers.synchronization import FlussSynchronization
+from fluss.synchronization import FlussSynchronization
 from fluss_servers.models import Servers
 
 class PacketOrder(models.Model):

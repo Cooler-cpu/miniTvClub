@@ -1,13 +1,14 @@
 from fluss.service import BaseRequest
-from .models import ServerDvr 
+from fluss_servers.models import ServerDvr 
 
 class FlussSynchronization(BaseRequest):
     def __init__(self, server, server_up = None):
         self.server = server
         self.server_up = server_up
-        # поля которые синхронизируем
+        """
+        поля которые синхронизируем
+        """
         self.dataSync = ("auth_backends", "dvrs", "streams")
-
 
     def delete_all_auth_backends(self):
         auth_backends = getattr(self.server, "auth_backends")
@@ -18,8 +19,11 @@ class FlussSynchronization(BaseRequest):
             ServerDvr.objects.get(name = dvr).delete()
 
 
-    # Удалить все обьекты auth которых нет на медиа сервере, но есть у нас в обьекте сервера
+    
     def delete_objects_auth(self, config_auth):
+        """
+        # Удалить все обьекты auth которых нет на медиа сервере, но есть у нас в обьекте сервера
+        """
         auth_backends = getattr(self.server, "auth_backends")
         list_Auth_names = [authConfig for authConfig in config_auth]
         for auth in auth_backends.all():
