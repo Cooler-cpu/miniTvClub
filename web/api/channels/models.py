@@ -3,7 +3,8 @@ from django.db import models
 
 from PIL import Image
 
-from fluss_streams.models import Streams
+# from fluss_streams.models import Streams
+from site_manager.models import StreamsProxy
 from users.models import Users
 
 from .validators import validate_epgshift, validate_arhivedays
@@ -35,7 +36,8 @@ class Channels(models.Model):
     st = [("0",'Выключен'),("1",'Включен')]
 
     name = models.CharField(verbose_name="Название канала", max_length=120, null = True)
-    stream = models.ForeignKey(Streams, verbose_name="Поток стрима на канал", on_delete=models.CASCADE, null = True)
+    # stream = models.ForeignKey(Streams, verbose_name="Поток стрима на канал", on_delete=models.CASCADE, null = True)
+    stream = models.ForeignKey(StreamsProxy, verbose_name="Поток стрима на канал", on_delete=models.CASCADE, null = True)
     logo = models.ImageField(verbose_name="Лого", upload_to='logo', null = True) 
     epg = models.ForeignKey(Epg, verbose_name="Поставщик ТВ программы", on_delete=models.CASCADE , null = True)
     epgshift = models.SmallIntegerField(verbose_name="Смещение времени ТВ программы канала(часы)", validators=[validate_epgshift],  null = True)

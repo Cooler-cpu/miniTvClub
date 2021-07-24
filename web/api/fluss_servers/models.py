@@ -105,7 +105,6 @@ class Servers(models.Model):
     status = models.CharField(verbose_name="Статус", max_length=1, choices=st, default="0")
     autobalancer = models.CharField(verbose_name="Учавствует в автобалансировки", max_length=1, choices=st, default="0")
     auth_backends = SortedManyToManyField(ServerAuth, verbose_name="Бэкенд авторизации")
-    
 
     class Meta:
         verbose_name = "Сервер"
@@ -113,5 +112,12 @@ class Servers(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.fluss_url}"
+
+
+    def get_dvrs(self):
+        return self.server_dvr.all()
+
+        
+
 
 

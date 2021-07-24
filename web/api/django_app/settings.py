@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'channels.apps.ChannelsConfig',
     'categories.apps.CategoriesConfig',
     'tokens.apps.TokensConfig',
-    'playlists.apps.PlaylistsConfig'
+    'playlists.apps.PlaylistsConfig',
+    'orders.apps.OrdersConfig'
 
 ]
 

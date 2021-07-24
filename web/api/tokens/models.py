@@ -21,7 +21,7 @@ class Token(models.Model):
     date_create = models.DateTimeField(verbose_name="Дата генерации токена", auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user} - {self.token}"
+        return f"{self.token}"
 
     def save(self):
         if not self.token:
