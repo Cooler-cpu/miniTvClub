@@ -41,7 +41,7 @@ class ServerDvr(models.Model):
     disk_limit = models.IntegerField(verbose_name="Диск лимит", default=85)
     dvr_limit = models.IntegerField(verbose_name="Архив лимит", default=259200)
     comment = models.TextField(verbose_name="Комментарий", blank=True, null=True)
-    server = models.ForeignKey("Servers", on_delete=models.CASCADE, verbose_name="Сервер", related_name="server_dvr", null=True)
+    server = models.ForeignKey("Servers", on_delete=models.CASCADE, verbose_name="Сервер", related_name="server_dvr", null=True, blank= True)
 
     def __str__(self):
         return self.name
@@ -57,7 +57,7 @@ class ServerDvr(models.Model):
                 raise ValidationError('Название архива запрещено менять')
         return super(ServerDvr, self).clean()
 
-    def save(self):
+    def save(self, **kwargs):
         super(ServerDvr, self).save()
         servers = Servers.objects.filter(name = self.server.name)
         ar = ArchivesRequest(servers)
@@ -115,6 +115,7 @@ class Servers(models.Model):
 
 
     def get_dvrs(self):
+        # return self.server_dvr.all()
         return self.server_dvr.all()
 
         

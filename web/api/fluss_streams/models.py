@@ -11,7 +11,7 @@ from .validators import validate_archive_server, validate_piplenes
 class Streams(models.Model):
     st = [("0",'Выключен'),("1",'Включен')]
 
-    name = models.SlugField(verbose_name="Название стрима")
+    name = models.SlugField(verbose_name="Название стрима", unique=True)
     sourse = models.CharField(verbose_name="Поток на канал", max_length=120)
     fluss_pipelines = models.ForeignKey(Pipelines, verbose_name="Пакет серверов", on_delete=models.CASCADE, validators= [validate_piplenes])
     data_create = models.DateTimeField(verbose_name="Дата создание стрима", default=now)
