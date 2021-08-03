@@ -1,13 +1,8 @@
 (function($){   
   $(function(){
       $(document).ready(function() {
-		let type = getSelectType()
 		$("select[name=fluss_pipelines]").on("change",()=>{type_change()})
-		if (type == undefined)      
-			$('.servers_archive').hide();
-		else{
-			type_change(stream_name)
-		}
+		type_change()
       });
 });  
 })(django.jQuery);
@@ -39,7 +34,13 @@ function type_change(){
 	)
 	.done(
 		function (data) {
-			alert("try")
+			$("select[name=servers_archive] option").each(function( index, item ) {
+				if (item.innerHTML != "---------")
+					item.remove()
+			})
+			data.forEach(item =>{
+				$("select[name=servers_archive]").append($('<option>').val(item.id).text(item.name))
+			});
 		}
 	)
 	.fail(
