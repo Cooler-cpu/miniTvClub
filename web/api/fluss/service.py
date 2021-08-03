@@ -130,7 +130,6 @@ class StreamRequest(BaseRequest):
 			else:
 				stream['dvr'] = None
 			config['streams'][self.stream_name]['urls'] = [{'url':self.stream_sourse}]
-			print(config['streams'])
 			self.send_config(server, config)
 			
 	def delete_stream(self):
