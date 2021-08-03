@@ -129,25 +129,20 @@ class FlussSynchronization(StreamRequest):
             
     
     def synchronization_fields_streams(self, config_stream):
+        pass
         """
         Синхронизирует поля стрима 
         """
-        list_stream_name = [stream for stream in config_stream]
         pipelines = Pipelines.objects.filter(fluss_servers = self.server)
 
         for pipeline in pipelines:
             list_stream_system = [stream.name for stream in Streams.objects.filter(fluss_pipelines = pipeline)]
         
             for stream_name in list_stream_system:
-                source = config_stream[stream_name]['urls'][0]['url']
-
-                Streams.objects.update_or_create(
-                    name = stream_name,
-                    fluss_pipelines = pipeline,
-                    defaults={
-                        'sourse' : source
-                    }
-                )
+                
+                stream = Streams.objects.get(name = stream_name)
+                sr = StreamRequest(stream)
+                sr.update_stream()
 
 
 
