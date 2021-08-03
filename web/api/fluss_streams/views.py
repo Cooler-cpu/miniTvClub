@@ -23,10 +23,3 @@ class GetPipelinesListView(APIView):
         serializer = DVRSerializers(archives, many=True)
         data = serializer.data
         return Response(data)
-
-
-
-
-class Test(ListAPIView):
-    serializer_class = DVRSerializers
-    queryset = ServerDvr.objects.all()
