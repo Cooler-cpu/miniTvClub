@@ -10,5 +10,8 @@ class StreamAdmin(admin.ModelAdmin):
         if obj:
             return ['name']
         return self.readonly_fields
+
+    class Media:
+        js = ['/static/js/action_change.js']
       
 admin.site.register(StreamsProxy, StreamAdmin)

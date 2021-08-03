@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'nested_admin',
     'sortedm2m',
     'adminsortable2',
+    'rest_framework',
 
     'users.apps.UsersConfig',
     'fluss_streams.apps.FlussStreamsConfig',
