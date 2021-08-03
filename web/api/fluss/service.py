@@ -40,8 +40,8 @@ class ArchivesRequest(BaseRequest):
 			dvrs = {}
 			for item in config_dvrs:
 				dvrs[item] = None
-			obj = server.dvr
-			if obj:
+			objs = server.server_dvr.all()
+			for obj in objs:
 				dvrs[obj.name] = {}
 				dvrs[obj.name]['disk_limit'] = obj.disk_limit
 				dvrs[obj.name]['dvr_limit'] = obj.dvr_limit
@@ -55,6 +55,18 @@ class ArchivesRequest(BaseRequest):
 					dvrs[obj.name]['schedule'].append( [item.start, item.end] )
 			config['dvrs'] = dvrs
 			self.send_config(server, config)
+
+	def delete_archive(self, archive):
+		for server in self.servers:
+			archives = server.server_dvr.all()
+			if archives.get(name = archive):
+				config = self.get_config(server)
+				config_archive = config.get("dvrs", {})
+				archive_name = archive.name
+				config_archive[archive_name] = None
+				config['dvrs'] = config_archive
+				self.send_config(server, config)
+
 
 
 class AuthRequest(BaseRequest):
@@ -78,6 +90,20 @@ class AuthRequest(BaseRequest):
 				auth_backends[obj.name]['name'] = obj.name
 			config['auth_backends'] = auth_backends
 			self.send_config(server, config)
+
+	def delete_auth(self, auth):
+		for server in self.servers:
+			auth_backends = server.auth_backends.all()
+			if auth_backends.get(name = auth):
+				config = self.get_config(server)
+				config_auth = config.get("auth_backends", {})
+				auth_name = auth.name
+				config_auth[auth_name] = None
+				config['auth_backends'] = config_auth
+				self.send_config(server, config)
+
+
+
 
 
 class StreamRequest(BaseRequest):
@@ -104,7 +130,6 @@ class StreamRequest(BaseRequest):
 			else:
 				stream['dvr'] = None
 			config['streams'][self.stream_name]['urls'] = [{'url':self.stream_sourse}]
-			print(config['streams'])
 			self.send_config(server, config)
 			
 	def delete_stream(self):

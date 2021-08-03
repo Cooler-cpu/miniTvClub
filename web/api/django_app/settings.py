@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'nested_admin',
     'sortedm2m',
     'adminsortable2',
+    'rest_framework',
 
     'users.apps.UsersConfig',
     'fluss_streams.apps.FlussStreamsConfig',
@@ -42,7 +43,8 @@ INSTALLED_APPS = [
     'channels.apps.ChannelsConfig',
     'categories.apps.CategoriesConfig',
     'tokens.apps.TokensConfig',
-    'playlists.apps.PlaylistsConfig'
+    'playlists.apps.PlaylistsConfig',
+    'orders.apps.OrdersConfig'
 
 ]
 

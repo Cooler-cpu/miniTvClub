@@ -44,14 +44,10 @@ class Playlists(models.Model):
         verbose_name = "Плейлист"
         verbose_name_plural = "Плейлисты"
     
-    def clean(self):
-        if(self.status == 0):
-            self.token = None
-
+    def save(self):
         if(int(self.oneip) == 0):
             self.oneipfreeconnections = None
-        super(Playlists, self).clean()
-
+        super(Playlists, self).save()
 
     def __str__(self):
         return self.name

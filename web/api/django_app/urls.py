@@ -10,8 +10,8 @@ urlpatterns = [
     path('_nested_admin/', include('nested_admin.urls')),
     path('admin/', admin.site.urls),
     path('test', Load.as_view()),
-
     path('api/', include('channels.urls')),
+    path('', include('fluss_streams.urls')),
 ]
 
 if settings.DEBUG:

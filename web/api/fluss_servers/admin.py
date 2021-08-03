@@ -1,10 +1,10 @@
 from django.contrib import admin
-from django.db import models
-from django.db.models import fields
+
+import nested_admin
 
 from .models import ServerDvr, DvrPath, Servers, AuthUrl, ServerAuth, Schedule
 
-import nested_admin
+from fluss.service import ArchivesRequest, AuthRequest
 
 
 class DvrPathInline(nested_admin.NestedTabularInline):
@@ -17,15 +17,11 @@ class ScheduleInline(nested_admin.NestedTabularInline):
     extra = 0
 
 
-class ServerDvrInline(nested_admin.NestedModelAdmin):
+class ServerDvrInline(nested_admin.NestedTabularInline):
     inlines = [DvrPathInline, ScheduleInline]
     model = ServerDvr
     fields = ("name", "root", "disk_limit", "dvr_limit", "comment")
-
-    def get_readonly_fields(self, request, obj=None):
-        if obj:
-            return ['name']
-        return self.readonly_fields
+    extra = 0
 
 
 class AuthUrlInline(nested_admin.NestedTabularInline):
@@ -38,6 +34,15 @@ class ServerAuthAdmin(nested_admin.NestedModelAdmin):
     model = ServerAuth
     extra = 0
     fields = ("name", "allow_default")
+    
+    def save_related(self, request, form, formsets, change):
+        super().save_related(request, form, formsets, change)
+        auth = ServerAuth.objects.get(id=form.instance.id)
+        servers = auth.servers_set.all()
+        at = AuthRequest(servers)
+        at.update_auths()
+
+
 
     def get_readonly_fields(self, request, obj=None):
         if obj:
@@ -45,6 +50,12 @@ class ServerAuthAdmin(nested_admin.NestedModelAdmin):
         return self.readonly_fields
 
 
-admin.site.register(Servers)
+class ServersAdmin(nested_admin.NestedModelAdmin):
+    inlines = [ServerDvrInline]
+    model = Servers
+    extra = 0
+
+
+admin.site.register(Servers, ServersAdmin)
 admin.site.register(ServerAuth, ServerAuthAdmin)
-admin.site.register(ServerDvr, ServerDvrInline)
+admin.site.register(ServerDvr)

@@ -20,6 +20,8 @@ class Token(models.Model):
     token = models.CharField(verbose_name="Токен", max_length=150, blank=True, null=True)
     date_create = models.DateTimeField(verbose_name="Дата генерации токена", auto_now_add=True)
 
+    def __str__(self):
+        return self.token
 
     def save(self):
         if not self.token:
