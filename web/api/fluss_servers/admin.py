@@ -55,6 +55,12 @@ class ServersAdmin(nested_admin.NestedModelAdmin):
     model = Servers
     extra = 0
 
+    button_template = '/templates/sync_button.html'
+
+    class Media:
+        js = ['/static/js/synchronizationButton.js']
+
+
 
 admin.site.register(Servers, ServersAdmin)
 admin.site.register(ServerAuth, ServerAuthAdmin)

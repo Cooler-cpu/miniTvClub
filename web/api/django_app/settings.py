@@ -27,9 +27,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'nested_admin',
+
     'sortedm2m',
     'adminsortable2',
+
+    'rest_framework',
 
     'users.apps.UsersConfig',
     'fluss_streams.apps.FlussStreamsConfig',
