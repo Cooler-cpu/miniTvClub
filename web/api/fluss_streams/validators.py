@@ -7,10 +7,10 @@ from fluss_pipelines.models import Pipelines
 
 def validate_archive_server(value):
     server = Servers.objects.get(id=value)
-    if not server.dvr:
+    if not server.get_dvrs():
         raise ValidationError("Архив на данном сервере отсутствует")
     else:
-        return value
+      return value
 
       
 def validate_piplenes(value):

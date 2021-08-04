@@ -1,6 +1,7 @@
 (function($){   
   $(function(){
       $(document).ready(function() {
+		console.log("hi")
 		$("select[name=fluss_pipelines]").on("change",()=>{type_change()})
 		type_change()
       });
@@ -34,12 +35,12 @@ function type_change(){
 	)
 	.done(
 		function (data) {
-			$("select[name=servers_archive] option").each(function( index, item ) {
+			$("select[name=archive] option").each(function( index, item ) {
 				if (item.innerHTML != "---------")
 					item.remove()
 			})
 			data.forEach(item =>{
-				$("select[name=servers_archive]").append($('<option>').val(item.id).text(item.name))
+				$("select[name=archive]").append($('<option>').val(item.id).text(item.name))
 			});
 		}
 	)

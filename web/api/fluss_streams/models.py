@@ -2,9 +2,7 @@ from django.db import models
 from django.utils.timezone import now
 from fluss.service import StreamRequest
 from fluss_pipelines.models import Pipelines
-from fluss_servers.models import Servers, ServerDvr
-# from django.db.models.signals import pre_delete
-# from django.dispatch.dispatcher import receiver
+from fluss_servers.models import ServerDvr
 from .validators import validate_archive_server, validate_piplenes
 
 

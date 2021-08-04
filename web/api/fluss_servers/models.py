@@ -44,7 +44,7 @@ class ServerDvr(models.Model):
     server = models.ForeignKey("Servers", on_delete=models.CASCADE, verbose_name="Сервер", related_name="server_dvr", null=True, blank= True)
 
     def __str__(self):
-        return self.name
+        return f"{self.server} - {self.name}"
 
     class Meta:
         verbose_name = "Архив сервера"
