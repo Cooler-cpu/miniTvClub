@@ -115,7 +115,6 @@ class Servers(models.Model):
 
 
     def get_dvrs(self):
-        # return self.server_dvr.all()
         return self.server_dvr.all()
 
         

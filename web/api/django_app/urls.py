@@ -1,3 +1,4 @@
+from django import urls
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
@@ -14,7 +15,12 @@ urlpatterns = [
     path('_nested_admin/', include('nested_admin.urls')),
     path('admin/', admin.site.urls),
     path('test', Load.as_view()),
+<<<<<<< HEAD
 
+=======
+    path('api/', include('channels.urls')),
+    path('', include('fluss_streams.urls')),
+>>>>>>> 42fea2242f6173ae3a55d2f88e344deab41ea784
 ]
 
 if settings.DEBUG:
