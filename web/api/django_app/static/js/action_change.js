@@ -35,7 +35,6 @@ function type_change(){
 	)
 	.done(
 		function (data) {
-			console.log(data)
 			$("select[name=archive] option").each(function( index, item ) {
 				if (item.innerHTML != "---------")
 					item.remove()
