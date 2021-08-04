@@ -27,10 +27,21 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+<<<<<<< HEAD
+=======
+
+<<<<<<< HEAD
+=======
+    'rest_framework',
+>>>>>>> 8c26bff91f9fea53e4617f3722bfa5a20d724d46
     
+>>>>>>> 42fea2242f6173ae3a55d2f88e344deab41ea784
     'nested_admin',
+
     'sortedm2m',
     'adminsortable2',
+    'rest_framework',
+
     'rest_framework',
 
     'users.apps.UsersConfig',
