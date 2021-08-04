@@ -124,7 +124,7 @@ class StreamRequest(BaseRequest):
 			stream['auth']['url'] = f"auth://{server.auth_backends.all().first().name}"
 			stream['name'] = self.stream_name
 			config['streams'][self.stream_name] = stream
-			if self.archive in server.dvr.all():
+			if self.archive in server.get_dvrs():
 				stream['dvr'] = {"reference":self.archive.name}
 			else:
 				stream['dvr'] = None
