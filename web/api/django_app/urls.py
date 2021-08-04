@@ -5,13 +5,22 @@ from django.conf import settings
 from django.conf.urls.static import static
 from .views import Load
 
+from django.conf.urls import include, url
+
 urlpatterns = [
+    url('server', include(('fluss_servers.urls', 'fluss_servers'), namespace='fluss_servers')),
+
+    
     path('grappelli/', include('grappelli.urls')),
     path('_nested_admin/', include('nested_admin.urls')),
     path('admin/', admin.site.urls),
     path('test', Load.as_view()),
+<<<<<<< HEAD
+
+=======
     path('api/', include('channels.urls')),
     path('', include('fluss_streams.urls')),
+>>>>>>> 42fea2242f6173ae3a55d2f88e344deab41ea784
 ]
 
 if settings.DEBUG:
