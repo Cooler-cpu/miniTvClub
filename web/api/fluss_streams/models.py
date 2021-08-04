@@ -15,7 +15,7 @@ class Streams(models.Model):
     sourse = models.CharField(verbose_name="Поток на канал", max_length=120)
     fluss_pipelines = models.ForeignKey(Pipelines, verbose_name="Пакет серверов", on_delete=models.CASCADE, validators= [validate_piplenes])
     data_create = models.DateTimeField(verbose_name="Дата создание стрима", default=now)
-    servers_archive = models.ForeignKey(ServerDvr, verbose_name="Архив на сервере", blank=True, null=True, on_delete=models.SET_NULL, validators= [validate_archive_server])
+    archive = models.ForeignKey(ServerDvr, verbose_name="Архив на сервере", blank=True, null=True, on_delete=models.SET_NULL, validators= [validate_archive_server])
     status = models.CharField(verbose_name="Статус", max_length=1, choices=st, default="1")
 
     class Meta:
@@ -29,9 +29,3 @@ class Streams(models.Model):
         super(Streams, self).save()
         sr = StreamRequest(self)
         sr.update_stream()
-
-
-# @receiver(pre_delete, sender=Streams)
-# def streams_delete(sender, instance, **kwargs):
-#     sr = StreamRequest(instance)
-#     sr.delete_stream()
