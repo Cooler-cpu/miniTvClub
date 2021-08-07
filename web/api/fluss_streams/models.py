@@ -3,8 +3,7 @@ from django.utils.timezone import now
 from fluss.service import StreamRequest
 from fluss_pipelines.models import Pipelines
 from fluss_servers.models import ServerDvr
-from .validators import validate_archive_server, validate_piplenes
-
+from .validators import validate_piplenes,  validate_archive_server
 
 class Streams(models.Model):
     st = [("0",'Выключен'),("1",'Включен')]
@@ -14,6 +13,7 @@ class Streams(models.Model):
     fluss_pipelines = models.ForeignKey(Pipelines, verbose_name="Пакет серверов", on_delete=models.CASCADE, validators= [validate_piplenes])
     data_create = models.DateTimeField(verbose_name="Дата создание стрима", default=now)
     archive = models.ForeignKey(ServerDvr, verbose_name="Архив на сервере", blank=True, null=True, on_delete=models.SET_NULL, validators= [validate_archive_server])
+    #archive = models.ForeignKey(ServerDvr, verbose_name="Архив на сервере", blank=True, null=True, on_delete=models.SET_NULL, validators= [validate_archive_server])
     status = models.CharField(verbose_name="Статус", max_length=1, choices=st, default="1")
 
     class Meta:

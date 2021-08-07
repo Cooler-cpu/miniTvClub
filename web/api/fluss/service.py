@@ -58,8 +58,8 @@ class ArchivesRequest(BaseRequest):
 
 	def delete_archive(self, archive):
 		for server in self.servers:
-			archives = server.server_dvr.all()
-			if archives.get(name = archive):
+			archives = server.get_dvrs()
+			if archives.get(name = archive.name):
 				config = self.get_config(server)
 				config_archive = config.get("dvrs", {})
 				archive_name = archive.name

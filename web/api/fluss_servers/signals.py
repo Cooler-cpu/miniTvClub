@@ -20,13 +20,15 @@ def create_server(instance, **kwargs):
 
 @receiver(pre_delete, sender=ServerAuth)
 def auth_delete(sender, instance, **kwargs):
+    print("AUTH DELETE SIGNAL")
     servers = instance.servers_set.all()
     at = AuthRequest(servers)
     at.delete_auth(instance)
 
 
 @receiver(pre_delete, sender=ServerDvr)
-def auth_delete(sender, instance, **kwargs):
+def archive_delete(sender, instance, **kwargs):
+    print("ARCHIVE DELETE SIGNAL")
     servers = Servers.objects.filter(name = instance.server.name)
     ar = ArchivesRequest(servers)
     ar.delete_archive(instance)

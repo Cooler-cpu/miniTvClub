@@ -6,9 +6,6 @@ from channels.models import Packets
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
-# test
-from fluss.synchronization import FlussSynchronization
-from fluss_servers.models import Servers
 
 class PacketOrder(models.Model):
     st = [("0",'Системный'),("1",'Приватный')]  
@@ -30,14 +27,6 @@ class PacketOrder(models.Model):
 
     def save(self):
         self.dateStop = datetime.now() + relativedelta(months=+1)
-        
-        """
-        test function synchronization
-        if data exist on media server and not exist in server object
-        """
-        server = Servers.objects.get(fluss_url = 'http://a1.minitv.club:8080')
-        sync = FlussSynchronization(server)
-        sync.synchronization_server()
 
         super(PacketOrder, self).save()
 
