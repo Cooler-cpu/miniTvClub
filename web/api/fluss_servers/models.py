@@ -1,14 +1,18 @@
 from django.db import models
+from django.core.exceptions import ValidationError
+
+from django.db.models.signals import m2m_changed, post_save
+from django.dispatch import receiver
+
+from sortedm2m.fields import SortedManyToManyField
 
 from fluss.service import ArchivesRequest, AuthRequest
 
-from sortedm2m.fields import SortedManyToManyField
-from django.db.models.signals import m2m_changed
-from django.dispatch import receiver
+from django.db.models.signals import pre_delete
 
 
 class ServerAuth(models.Model):
-    name = models.CharField(verbose_name="Название бэкенд авторизации", max_length=120, default="name")
+    name = models.CharField(verbose_name="Название бэкенд авторизации", max_length=120, default="name", unique=True)
     allow_default = models.BooleanField(verbose_name="Разрешить, если все бэкенды вышли из строя", default=False)
 
     def __str__(self):
@@ -18,26 +22,13 @@ class ServerAuth(models.Model):
         verbose_name = "Бэкенд авторизация"
         verbose_name_plural = "Бэкенд авторизации"
 
-    # def clean(self):
-    #     list_servers = Servers.objects.filter(auth_backends__in=[self])
-    #     at = AuthRequest(list_servers)
-    #     at.update_auths()
-    #     super(ServerAuth, self).clean()
-
-
-    # def delete(self):
-    #     super(ServerAuth, self).delete()
-    #     list_servers = Servers.objects.filter(auth_backends__in=[self])
-    #     at = AuthRequest(list_servers)
-    #     at.update_auths()
-
 
 class AuthUrl(models.Model):
     url = models.CharField(verbose_name="Ссылка на бэкенд", max_length=120)
     server_auth = models.ForeignKey(ServerAuth, verbose_name="Бэкенд авторизация", on_delete=models.CASCADE, related_name="auth_urls")
 
     def __str__(self):
-        return self.server_auth.name
+        return f"{self.server_auth} - {self.url}"
 
     class Meta:
         verbose_name = "Ссылка на бэкенд авторизацию"
@@ -50,13 +41,27 @@ class ServerDvr(models.Model):
     disk_limit = models.IntegerField(verbose_name="Диск лимит", default=85)
     dvr_limit = models.IntegerField(verbose_name="Архив лимит", default=259200)
     comment = models.TextField(verbose_name="Комментарий", blank=True, null=True)
+    server = models.ForeignKey("Servers", on_delete=models.CASCADE, verbose_name="Сервер", related_name="server_dvr", null=True, blank= True)
 
     def __str__(self):
-        return self.name
+        return f"{self.server} - {self.name}"
 
     class Meta:
         verbose_name = "Архив сервера"
         verbose_name_plural = "Архив сервера"
+
+    def clean(self):
+        old_obj = ServerDvr.objects.filter(id=self.id)
+        if old_obj.exists():
+            if old_obj[0].name != self.name:
+                raise ValidationError('Название архива запрещено менять')
+        return super(ServerDvr, self).clean()
+
+    def save(self, **kwargs):
+        super(ServerDvr, self).save()
+        servers = Servers.objects.filter(name = self.server.name)
+        ar = ArchivesRequest(servers)
+        ar.update_archive()
 
 
 class Schedule(models.Model):
@@ -100,7 +105,6 @@ class Servers(models.Model):
     status = models.CharField(verbose_name="Статус", max_length=1, choices=st, default="0")
     autobalancer = models.CharField(verbose_name="Учавствует в автобалансировки", max_length=1, choices=st, default="0")
     auth_backends = SortedManyToManyField(ServerAuth, verbose_name="Бэкенд авторизации")
-    dvr = models.ForeignKey(ServerDvr, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Архив")
 
     class Meta:
         verbose_name = "Сервер"
@@ -110,12 +114,10 @@ class Servers(models.Model):
         return f"{self.name} - {self.fluss_url}"
 
 
-@receiver(m2m_changed, sender = Servers.auth_backends.through)
-def create_server(instance, **kwargs):
-    action = kwargs.pop('action', None)
-    list_servers= [instance]
-    if action == "post_add":
-        ar = ArchivesRequest(list_servers)
-        ar.update_archive()
-        at = AuthRequest(list_servers)
-        at.update_auths()
+    def get_dvrs(self):
+        return self.server_dvr.all()
+
+        
+
+
+
