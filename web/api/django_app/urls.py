@@ -15,6 +15,7 @@ urlpatterns = [
     path('test', Load.as_view()),
     path('api/', include('channels.urls')),
     path('', include('fluss_streams.urls')),
+    # path('', include('auth.urls'))
 ]
 
 if settings.DEBUG:

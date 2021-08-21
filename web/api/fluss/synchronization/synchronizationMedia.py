@@ -17,8 +17,6 @@ class MediaSynchronization(StreamRequest):
         config_sync["auth_backends"] = config_auth
         config_sync["dvrs"] = config_dvrs
 
-        # print(config_sync)
-
         return config_sync
         
     

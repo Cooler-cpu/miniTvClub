@@ -3,7 +3,6 @@ from django.db import models
 
 from PIL import Image
 
-# from fluss_streams.models import Streams
 from site_manager.models import StreamsProxy
 from users.models import Users
 
@@ -14,6 +13,8 @@ from categories.models import Categories, Languages
 from utils.models_utils import get_ordering_field
 
 from django.utils.timezone import now
+
+from .logics import arhivedays_recording
 
 class Epg(models.Model):
     name = models.CharField(verbose_name="Название поставщика телепрограммы", max_length=120, null = True)
@@ -36,12 +37,11 @@ class Channels(models.Model):
     st = [("0",'Выключен'),("1",'Включен')]
 
     name = models.CharField(verbose_name="Название канала", max_length=120, null = True)
-    # stream = models.ForeignKey(Streams, verbose_name="Поток стрима на канал", on_delete=models.CASCADE, null = True)
     stream = models.ForeignKey(StreamsProxy, verbose_name="Поток стрима на канал", on_delete=models.CASCADE, null = True)
     logo = models.ImageField(verbose_name="Лого", upload_to='logo', null = True) 
     epg = models.ForeignKey(Epg, verbose_name="Поставщик ТВ программы", on_delete=models.CASCADE , null = True)
     epgshift = models.SmallIntegerField(verbose_name="Смещение времени ТВ программы канала(часы)", validators=[validate_epgshift],  null = True)
-    arhivedays = models.SmallIntegerField(verbose_name="Количество дней записи архива", validators=[validate_arhivedays],  null = True)
+    arhivedays = models.SmallIntegerField(verbose_name="Количество дней записи архива", validators=[validate_arhivedays])
     catchup = models.BooleanField(verbose_name="catchup", default=True)
     categories = models.ForeignKey(Categories, verbose_name="Категория", on_delete=models.CASCADE, null = True)
     languages = models.ForeignKey(Languages, verbose_name="Язык трансялции", on_delete=models.CASCADE, null = True)
@@ -58,6 +58,7 @@ class Channels(models.Model):
         
     def save(self, *args, **kwards):
         super().save(*args, **kwards)
+        arhivedays_recording(self.stream, self.arhivedays)
         if self.logo:
             image = Image.open(self.logo.path)
             if image.height > 60 or image.width > 60:

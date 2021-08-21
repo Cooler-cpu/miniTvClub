@@ -30,7 +30,7 @@ class BaseRequest(HeaderRequest):
 
 
 class ArchivesRequest(BaseRequest):
-	def __init__(self, servers):
+	def __init__(self, servers = None):
 		self.servers = servers
 
 	def update_archive(self):
@@ -50,11 +50,21 @@ class ArchivesRequest(BaseRequest):
 				dvrs[obj.name]['disks'] = {}
 				for item in obj.dvr_urls.all():
 					dvrs[obj.name]['disks'][item.url] = {}
-				dvrs[obj.name]['schedule'] = []
-				for item in obj.dvr_schedule.all():
-					dvrs[obj.name]['schedule'].append( [item.start, item.end] )
 			config['dvrs'] = dvrs
 			self.send_config(server, config)
+
+	def update_schedule(self, server, dvr):
+		config = self.get_config(server)
+		config['dvrs'][dvr.name]['schedule'] = []
+		for item in dvr.dvr_schedule.all():
+			time_start = item.start.strftime('%H:%M').split(':')
+			time_end = item.end.strftime('%H:%M').split(':')
+			time_start = time_start[0] + time_start[1]
+			time_end = time_end[0] + time_end[1]
+			config['dvrs'][dvr.name]['schedule'].append([time_start, time_end])
+		self.send_config(server, config)
+
+
 
 	def delete_archive(self, archive):
 		for server in self.servers:
@@ -101,8 +111,6 @@ class AuthRequest(BaseRequest):
 				config_auth[auth_name] = None
 				config['auth_backends'] = config_auth
 				self.send_config(server, config)
-
-
 
 
 

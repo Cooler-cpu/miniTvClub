@@ -1,6 +1,4 @@
-from fluss_servers.models import ServerDvr 
-from fluss_servers.models import ServerAuth, AuthUrl
-
+from fluss_servers.models import ServerDvr, Schedule,ServerAuth, AuthUrl
 from fluss_pipelines.models import Pipelines
 from fluss_streams.models import Streams
 
@@ -28,12 +26,10 @@ class ModelSynchronization(StreamRequest):
             ServerDvr.objects.get(name = dvr.name).delete()
 
     def delete_objects_dvrs(self, config_dvr):
-        
         """
         Удалить все обьекты dvr которых нет на медиа сервере, но есть у нас в обьекте сервера
         """
         list_Dvrs_names = [dvr for dvr in config_dvr]
-        print(list_Dvrs_names)
         for dvr in self.server.get_dvrs():
             is_delete = True
             for name_config in list_Dvrs_names:
@@ -101,7 +97,7 @@ class ModelSynchronization(StreamRequest):
                     dvr_limit = config_dvr[dvr_name]['dvr_limit']
 
             if disk_limit and dvr_limit:
-                ServerDvr.objects.update_or_create(
+                obj, is_create = ServerDvr.objects.update_or_create(
                 name = str(dvr_name),
                 defaults={
                     'root' : config_dvr[dvr_name]['root'],
@@ -110,6 +106,8 @@ class ModelSynchronization(StreamRequest):
                     'server' : self.server
                 }
             )
+            # for dvr_schedule in config_dvr[dvr_name]["schedule"]:
+            #     print(dvr_schedule.str())
 
 
     def stream_fields_update(self, config_stream):

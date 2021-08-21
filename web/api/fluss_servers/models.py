@@ -8,7 +8,6 @@ from sortedm2m.fields import SortedManyToManyField
 
 from fluss.service import ArchivesRequest, AuthRequest
 
-from django.db.models.signals import pre_delete
 
 
 class ServerAuth(models.Model):
@@ -65,8 +64,10 @@ class ServerDvr(models.Model):
 
 
 class Schedule(models.Model):
-    start = models.IntegerField(verbose_name="Время начала", default=1)
-    end = models.IntegerField(verbose_name="Время конца", default=2)
+    # start = models.IntegerField(verbose_name="Время начала", default=1)
+    # end = models.IntegerField(verbose_name="Время конца", default=2)
+    start = models.TimeField(verbose_name="Время начала")
+    end = models.TimeField(verbose_name="Время конца")
     comment = models.TextField(verbose_name="Комментарий", blank=True, null=True)
     server_dvr = models.ForeignKey(ServerDvr, verbose_name="Архив сервера", on_delete=models.CASCADE, related_name="dvr_schedule")
 
