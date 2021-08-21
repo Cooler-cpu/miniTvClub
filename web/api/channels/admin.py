@@ -11,6 +11,9 @@ class ChannelsAdmin(SortableAdminMixin, admin.ModelAdmin):
   
   def preview(self, obj):
     return format_html('<img src="{}" width="{}" style="object-fit: contain;">'.format(obj.logo.url, 150px))
+  
+  preview.short_description = 'Превью'
+  preview.allow_tags = True
 
 
 class EpgAdmin(SortableAdminMixin, admin.ModelAdmin):
