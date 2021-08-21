@@ -10,7 +10,7 @@ class ChannelsAdmin(SortableAdminMixin, admin.ModelAdmin):
   readonly_fields = ('preview',)
   
   def preview(self, obj):
-    return format_html('<img src="{}" width="{}" height="{}" style="object-fit: contain;">'.format(obj.logo.url, 150, 150))
+    return format_html('<img src="{}" width="{}" style="object-fit: contain;">'.format(obj.logo.url, 150px))
 
 
 class EpgAdmin(SortableAdminMixin, admin.ModelAdmin):
