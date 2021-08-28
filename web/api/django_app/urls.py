@@ -9,6 +9,7 @@ from django.conf.urls import include, url
 
 urlpatterns = [
     url('server', include(('fluss_servers.urls', 'fluss_servers'), namespace='fluss_servers')),
+    url('backapps', include(('backapps.urls', 'backapps'), namespace='backapps')),
     path('grappelli/', include('grappelli.urls')),
     path('_nested_admin/', include('nested_admin.urls')),
     path('admin/', admin.site.urls),

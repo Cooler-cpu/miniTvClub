@@ -1,13 +1,16 @@
-from fluss_servers.models import ServerDvr, Schedule,ServerAuth, AuthUrl
+from fluss_servers.models import ServerDvr, Schedule, ServerAuth, AuthUrl
 from fluss_pipelines.models import Pipelines
 from fluss_streams.models import Streams
-
 from fluss.service import StreamRequest
 
+
+from datetime import time
+
 class ModelSynchronization(StreamRequest):
-    def __init__(self, server, server_up = None):
+    def __init__(self, server, server_json = None, server_up = None):
         self.server = server
         self.server_up = server_up
+        self.server_json = server_json
         """
         поля которые синхронизируем
         """
@@ -89,25 +92,47 @@ class ModelSynchronization(StreamRequest):
         list_Dvrs_names = [dvr for dvr in config_dvr]
 
         for dvr_name in list_Dvrs_names:
-            for field in config_dvr[dvr_name]:
 
-                if field == 'disk_limit':
-                    disk_limit = config_dvr[dvr_name]['disk_limit']
-                if field == 'dvr_limit':
-                    dvr_limit = config_dvr[dvr_name]['dvr_limit']
+            key_disk_limit = 'disk_limit'
+            key_dvr_limit = 'dvr_limit'
+            if key_disk_limit in config_dvr[dvr_name]:
+                disk_limit = config_dvr[dvr_name]['disk_limit']
+            if key_dvr_limit in config_dvr[dvr_name]:
+                dvr_limit = config_dvr[dvr_name]['dvr_limit']
+
 
             if disk_limit and dvr_limit:
-                obj, is_create = ServerDvr.objects.update_or_create(
+                dvr_obj, is_create = ServerDvr.objects.update_or_create(
                 name = str(dvr_name),
                 defaults={
                     'root' : config_dvr[dvr_name]['root'],
-                    'disk_limit' : config_dvr[dvr_name]['disk_limit'],
+                    'disk_limit' : config_dvr[dvr_name]['disk_limit'], 
                     'dvr_limit' : config_dvr[dvr_name]['dvr_limit'],
                     'server' : self.server
                 }
             )
-            # for dvr_schedule in config_dvr[dvr_name]["schedule"]:
-            #     print(dvr_schedule.str())
+
+            key_schedule = 'schedule'
+            schedule = Schedule.objects.filter(server_dvr = dvr_obj).delete()
+            if key_schedule in config_dvr[dvr_name]:
+                for dvr_schedule in config_dvr[dvr_name]['schedule']:
+                    time_arr = []
+                    for time_int in dvr_schedule:
+                        time_str = str(time_int)
+                        size = len(str(time_str)) + 1
+                        if size != 2:
+                            timepart_1 = time_str[0:size//2]
+                            timepart_2 = time_str[size//2:]
+                            timepart_1 = int(timepart_1)
+                            timepart_2 = int(timepart_2)
+                            time_obj = time(timepart_1, timepart_2)
+                            time_arr.append(time_obj)
+                        else:
+                            time_int = int(time_str)
+                            time_obj = time(time_int)
+                            time_arr.append(time_obj)
+                    Schedule.objects.create(start = time_arr[0], end = time_arr[1], server_dvr = dvr_obj)
+
 
 
     def stream_fields_update(self, config_stream):
@@ -124,7 +149,6 @@ class ModelSynchronization(StreamRequest):
             except Streams.DoesNotExist:
                 stream = None
             if stream:
-                print(config_stream[stream_name]['urls'][0]['url'])
                 stream.sourse = config_stream[stream_name]['urls'][0]['url']
                 if config_stream[stream_name]['static'] == False:
                     stream.status = '0'
@@ -132,8 +156,47 @@ class ModelSynchronization(StreamRequest):
                     stream.status = '1'                
                 stream.save()
 
-                
+    
+    def synchronization_objects_streams(self, config_stream):
+        """
+        Синхронизация обьектов и полей стримов 
+        """
+        pipelines = Pipelines.objects.filter(fluss_servers = self.server)
 
+        list_stream_name = [stream for stream in config_stream]
+        
+        if pipelines:
+            for stream in list_stream_name:
+                for pipeline in pipelines:
+                    if config_stream[stream]['static'] == False:
+                        status = '0'
+                    else:
+                        status = '1'
+
+                    key_dvr = 'dvr'
+                    if key_dvr in config_stream[stream]:
+                        dvr_name = config_stream[stream]['dvr']['reference']
+                        dvr = ServerDvr.objects.get(name = dvr_name)
+                    else: 
+                        dvr = None
+
+                    key_url = 'urls'
+                    if key_url in config_stream[stream]:
+                        url = config_stream[stream]['urls'][0]['url']
+                    else:
+                        url = 'tshttp://127.0.0.1:8000/play/defaultUri'
+
+                    obj, is_create = Streams.objects.update_or_create(
+                        name = stream,
+                        defaults={
+                            'sourse': url,
+                            'fluss_pipelines': pipeline,
+                            'archive': dvr,
+                            'status': status,
+                        }
+                    )
+
+        
 
     # def synchronization_objects_streams(self, config_stream):
     #     """
@@ -185,9 +248,13 @@ class ModelSynchronization(StreamRequest):
         синхронизирует обьекты если их нет на медиа сервере но есть у нас удаляем.
         Для auth_backends и dvrs
         """
-        config = self.get_config(self.server)
+        if self.server_json:
+            config = self.server_json
+        else:
+            config = self.get_config(self.server)
         for syncField in self.data_sync:
             config[syncField] = config.get(syncField, {})
+
             if config[syncField]:
                 if syncField == "auth_backends":
                     self.delete_objects_auths(config[syncField])
@@ -196,7 +263,8 @@ class ModelSynchronization(StreamRequest):
                     self.delete_objects_dvrs(config[syncField])
                     self.synchronization_fields_dvrs(config[syncField])
                 if syncField == "streams":
-                    self.stream_fields_update(config[syncField])
+                    self.synchronization_objects_streams(config[syncField])
+                #     self.stream_fields_update(config[syncField])
                 #     self.synchronization_objects_streams(config[syncField])
                 #     self.synchronization_fields_streams(config[syncField])
             else:

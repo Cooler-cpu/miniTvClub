@@ -23,7 +23,7 @@ class Streams(models.Model):
     def __str__(self):
         return f"{self.name} - {self.sourse}"
 
-    def save(self):
-        super(Streams, self).save()
+    def save(self, *args, **kwargs):
+        super(Streams, self).save(*args, **kwargs)
         sr = StreamRequest(self)
         sr.update_stream()

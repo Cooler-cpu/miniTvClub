@@ -25,7 +25,9 @@ def auth_delete(sender, instance, **kwargs):
 @receiver(pre_delete, sender=ServerDvr)
 def archive_delete(sender, instance, **kwargs):
     print("ARCHIVE DELETE SIGNAL")
+    print(instance.server.name)
     servers = Servers.objects.filter(name = instance.server.name)
+    # print(servers)
     ar = ArchivesRequest(servers)
     ar.delete_archive(instance)
 

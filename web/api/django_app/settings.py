@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'sortedm2m',
     'adminsortable2',
     'rest_framework',
+    'sorl.thumbnail',
 
     'users.apps.UsersConfig',
     'fluss_streams.apps.FlussStreamsConfig',
@@ -42,7 +43,8 @@ INSTALLED_APPS = [
     'categories.apps.CategoriesConfig',
     'tokens.apps.TokensConfig',
     'playlists.apps.PlaylistsConfig',
-    'orders.apps.OrdersConfig'
+    'orders.apps.OrdersConfig',
+    'backapps.apps.BackappsConfig'
 
 ]
 

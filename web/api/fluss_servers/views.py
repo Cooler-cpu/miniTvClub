@@ -8,6 +8,8 @@ from fluss.synchronization.synchronizationModel import ModelSynchronization
 from fluss.synchronization.synchronizationMedia import MediaSynchronization
 from .models import Servers
 
+
+
 class ModelSynchronizationView(APIView):
     # permission_classes = (IsAuthenticated,)
 
@@ -22,7 +24,7 @@ class ModelSynchronizationView(APIView):
         except Servers.DoesNotExist:
             raise Http404
 
-        sync = ModelSynchronization(server)
+        sync = ModelSynchronization(server = server)
         try:
             sync.synchronization_model()
             res = {'success' : 'Сервер синхронизирован'}
@@ -51,9 +53,8 @@ class MediaSynchronizationView(APIView):
         except Servers.DoesNotExist:
             raise Http404
 
-
-        sync_media = MediaSynchronization(server_copy, server_sync)
-        sync_model = ModelSynchronization(server_sync)
+        sync_media = MediaSynchronization(server_copy = server_copy, server_sync = server_sync)
+        sync_model = ModelSynchronization(server_sync = server_sync)
 
         try:
             sync_media.synchronization_media()
@@ -64,6 +65,7 @@ class MediaSynchronizationView(APIView):
 
         except KeyError:
             res = {'error' : 'Ошибка синхронизации'}
+            return Response(res)
 
 
 

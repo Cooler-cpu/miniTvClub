@@ -3,17 +3,10 @@ from django.utils.html import format_html
 from .models import Channels, Epg, Packets
 
 from adminsortable2.admin import SortableAdminMixin
+from sorl.thumbnail.admin import AdminImageMixin
 
-
-class ChannelsAdmin(SortableAdminMixin, admin.ModelAdmin):
+class ChannelsAdmin(SortableAdminMixin, AdminImageMixin, admin.ModelAdmin):
   list_display = ("id","name", "stream")
-  readonly_fields = ('preview',)
-  
-  def preview(self, obj):
-    return format_html('<img src="{}" width="{}" style="object-fit: contain;">'.format(obj.logo.url, "150px"))
-  
-  preview.short_description = 'Превью'
-  preview.allow_tags = True
 
 
 class EpgAdmin(SortableAdminMixin, admin.ModelAdmin):

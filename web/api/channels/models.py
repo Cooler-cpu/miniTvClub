@@ -2,6 +2,7 @@
 from django.db import models
 
 from PIL import Image
+from sorl.thumbnail import ImageField
 
 from site_manager.models import StreamsProxy
 from users.models import Users
@@ -38,7 +39,7 @@ class Channels(models.Model):
 
     name = models.CharField(verbose_name="Название канала", max_length=120, null = True)
     stream = models.ForeignKey(StreamsProxy, verbose_name="Поток стрима на канал", on_delete=models.CASCADE, null = True)
-    logo = models.ImageField(verbose_name="Лого", upload_to='logo', null = True) 
+    logo = ImageField(verbose_name="Лого", upload_to='logo', null = True) 
     epg = models.ForeignKey(Epg, verbose_name="Поставщик ТВ программы", on_delete=models.CASCADE , null = True)
     epgshift = models.SmallIntegerField(verbose_name="Смещение времени ТВ программы канала(часы)", validators=[validate_epgshift],  null = True)
     arhivedays = models.SmallIntegerField(verbose_name="Количество дней записи архива", validators=[validate_arhivedays])

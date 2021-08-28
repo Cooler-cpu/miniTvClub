@@ -93,7 +93,7 @@ class DvrPath(models.Model):
 
 class Servers(models.Model):
     st = [("0",'Выключен'),("1",'Включен')]
-    name = models.CharField(verbose_name="Название сервера", max_length=120, default="name")
+    name = models.CharField(verbose_name="Название сервера", max_length=120, default="name", unique=True)
     fluss_url = models.CharField(verbose_name="Адрес на сервер", max_length=120, default="http://a1.minitv.club:8080")
     login = models.CharField(verbose_name="Логин подключения", max_length=120, default="test")
     password = models.CharField(verbose_name="Пароль подключения", max_length=120, default="test123")

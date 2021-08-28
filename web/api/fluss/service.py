@@ -3,6 +3,7 @@ import requests
 import json
 from requests.auth import _basic_auth_str
 from django.core.exceptions import ValidationError
+from django.http import Http404
 
 class HeaderRequest:
 	def get_headers(self, login=None, password=None):
@@ -17,16 +18,19 @@ class BaseRequest(HeaderRequest):
 	def get_config(self, server):
 		url = f"{server.fluss_url}/flussonic/api/read_config"
 		header = self.get_headers(server.login, server.password)
-		response = requests.get(url, headers = header)
-		answer = response.json()
-		return answer
+		try:
+			response = requests.get(url, headers = header)
+			answer = response.json()
+			return answer 
+		except Exception:
+			return False
+
 
 	def send_config(self, server, config):
 		url = f'{server.fluss_url}/flussonic/api/modify_config?async=true'
 		header = self.get_headers(server.login, server.password)
 		response = requests.post(url, headers=header, data = json.dumps(config))
 		answer = response.json()
-		print(answer)
 
 
 class ArchivesRequest(BaseRequest):
@@ -36,22 +40,23 @@ class ArchivesRequest(BaseRequest):
 	def update_archive(self):
 		for server in self.servers:
 			config = self.get_config(server)
-			config_dvrs = config.get("dvrs", {})
-			dvrs = {}
-			for item in config_dvrs:
-				dvrs[item] = None
-			objs = server.server_dvr.all()
-			for obj in objs:
-				dvrs[obj.name] = {}
-				dvrs[obj.name]['disk_limit'] = obj.disk_limit
-				dvrs[obj.name]['dvr_limit'] = obj.dvr_limit
-				dvrs[obj.name]['name'] = obj.name
-				dvrs[obj.name]['root'] = obj.root
-				dvrs[obj.name]['disks'] = {}
-				for item in obj.dvr_urls.all():
-					dvrs[obj.name]['disks'][item.url] = {}
-			config['dvrs'] = dvrs
-			self.send_config(server, config)
+			if config:
+				config_dvrs = config.get("dvrs", {})
+				dvrs = {}
+				for item in config_dvrs:
+					dvrs[item] = None
+				objs = server.server_dvr.all()
+				for obj in objs:
+					dvrs[obj.name] = {}
+					dvrs[obj.name]['disk_limit'] = obj.disk_limit
+					dvrs[obj.name]['dvr_limit'] = obj.dvr_limit
+					dvrs[obj.name]['name'] = obj.name
+					dvrs[obj.name]['root'] = obj.root
+					dvrs[obj.name]['disks'] = {}
+					for item in obj.dvr_urls.all():
+						dvrs[obj.name]['disks'][item.url] = {}
+				config['dvrs'] = dvrs
+				self.send_config(server, config)
 
 	def update_schedule(self, server, dvr):
 		config = self.get_config(server)
@@ -71,11 +76,12 @@ class ArchivesRequest(BaseRequest):
 			archives = server.get_dvrs()
 			if archives.get(name = archive.name):
 				config = self.get_config(server)
-				config_archive = config.get("dvrs", {})
-				archive_name = archive.name
-				config_archive[archive_name] = None
-				config['dvrs'] = config_archive
-				self.send_config(server, config)
+				if config:
+					config_archive = config.get("dvrs", {})
+					archive_name = archive.name
+					config_archive[archive_name] = None
+					config['dvrs'] = config_archive
+					self.send_config(server, config)
 
 
 
