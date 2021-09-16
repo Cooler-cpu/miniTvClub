@@ -20,7 +20,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'grappelli',
+    # 'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -33,13 +33,15 @@ INSTALLED_APPS = [
     'adminsortable2',
     'rest_framework',
     'sorl.thumbnail',
+    'django_object_actions',
+    'django_admin_row_actions',
 
     'users.apps.UsersConfig',
     'fluss_streams.apps.FlussStreamsConfig',
     'fluss_servers.apps.FlussServersConfig',
     'fluss_pipelines.apps.FlussPipelinesConfig',
-    'site_manager.apps.SiteManagerConfig',
-    'channels.apps.ChannelsConfig',
+    #'site_manager.apps.SiteManagerConfig',
+    # 'channels.apps.ChannelsConfig',
     'categories.apps.CategoriesConfig',
     'tokens.apps.TokensConfig',
     'playlists.apps.PlaylistsConfig',
@@ -63,7 +65,7 @@ ROOT_URLCONF = 'django_app.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

@@ -5,6 +5,7 @@ from requests.auth import _basic_auth_str
 from django.core.exceptions import ValidationError
 from django.http import Http404
 
+
 class HeaderRequest:
 	def get_headers(self, login=None, password=None):
 		headers = {'Content-type': 'application/json',
@@ -23,6 +24,7 @@ class BaseRequest(HeaderRequest):
 			answer = response.json()
 			return answer 
 		except Exception:
+			# raise ValidationError("Сервер не работает")
 			return False
 
 
@@ -69,8 +71,6 @@ class ArchivesRequest(BaseRequest):
 			config['dvrs'][dvr.name]['schedule'].append([time_start, time_end])
 		self.send_config(server, config)
 
-
-
 	def delete_archive(self, archive):
 		for server in self.servers:
 			archives = server.get_dvrs()
@@ -84,7 +84,6 @@ class ArchivesRequest(BaseRequest):
 					self.send_config(server, config)
 
 
-
 class AuthRequest(BaseRequest):
 	def __init__(self, servers):
 		self.servers = servers
@@ -93,19 +92,22 @@ class AuthRequest(BaseRequest):
 		for server in self.servers:
 			auths = server.auth_backends.all()
 			config = self.get_config(server)
-			config_auth = config.get("auth_backends", {})
-			auth_backends = {}
-			for item in config_auth:
-				auth_backends[item] = None
-			for obj in auths:
-				auth_backends[obj.name] = {}
-				auth_backends[obj.name]['allow_default'] = obj.allow_default
-				auth_backends[obj.name]['backends'] = []
-				for item in obj.auth_urls.all():
-					auth_backends[obj.name]['backends'].append( {'url':item.url} )
-				auth_backends[obj.name]['name'] = obj.name
-			config['auth_backends'] = auth_backends
-			self.send_config(server, config)
+			if config:
+				config_auth = config.get("auth_backends", {})
+				auth_backends = {}
+				for item in config_auth:
+					auth_backends[item] = None
+				for obj in auths:
+					auth_backends[obj.name] = {}
+					auth_backends[obj.name]['allow_default'] = obj.allow_default
+					auth_backends[obj.name]['backends'] = []
+					for item in obj.auth_urls.all():
+						auth_backends[obj.name]['backends'].append( {'url':item.url} )
+					auth_backends[obj.name]['name'] = obj.name
+				config['auth_backends'] = auth_backends
+				self.send_config(server, config)
+				return {'status': True}
+			return {'status': False}
 
 	def delete_auth(self, auth):
 		for server in self.servers:
@@ -119,7 +121,6 @@ class AuthRequest(BaseRequest):
 				self.send_config(server, config)
 
 
-
 class StreamRequest(BaseRequest):
 	def __init__(self, stream_obj):
 		self.pipeline = stream_obj.fluss_pipelines #пакет стримов
@@ -131,7 +132,7 @@ class StreamRequest(BaseRequest):
 	def update_stream(self):
 		for server in self.servers:
 			config = self.get_config(server)
-			config['streams'] = config.get("steams", {})
+			config['streams'] = config.get("streams", {})
 			stream = {}
 			stream['auth'] = {}
 			stream['auth']['soft_limitation'] = True
@@ -144,6 +145,23 @@ class StreamRequest(BaseRequest):
 				stream['dvr'] = None
 			config['streams'][self.stream_name]['urls'] = [{'url':self.stream_sourse}]
 			self.send_config(server, config)
+
+	def update_locale_dvr_limit(self, stream, sec_dvr_limit):
+		for server in self.servers:
+			config = self.get_config(server)
+			if config:
+				key_dvr = 'dvr'
+				if key_dvr in config['streams'][self.stream_name]:
+					config['streams'][self.stream_name]['dvr']['dvr_limit'] = sec_dvr_limit
+					self.send_config(server, config)
+
+	# def delete_locale_dvr_limit(self):
+	# 	for server in self.servers:
+	# 		config = self.get_config(server)
+	# 		if config: 
+	# 			key_dvr = 'dvr'
+	# 			if key_dvr
+	
 			
 	def delete_stream(self):
 		for server in self.servers:

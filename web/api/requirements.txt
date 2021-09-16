@@ -8,3 +8,5 @@ django-admin-sortable2
 requests
 Pillow
 sorl-thumbnail==12.7.0
+django-object-actions==3.0.2
+django-admin-row-actions

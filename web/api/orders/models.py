@@ -1,7 +1,8 @@
 from datetime import timedelta
 from django.db import models
 from users.models import Users
-from channels.models import Packets
+
+from fluss_streams.models import Packets
 
 from datetime import datetime
 from dateutil.relativedelta import relativedelta

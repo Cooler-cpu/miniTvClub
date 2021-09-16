@@ -22,6 +22,7 @@ def auth_delete(sender, instance, **kwargs):
     at = AuthRequest(servers)
     at.delete_auth(instance)
 
+
 @receiver(pre_delete, sender=ServerDvr)
 def archive_delete(sender, instance, **kwargs):
     print("ARCHIVE DELETE SIGNAL")
@@ -30,6 +31,7 @@ def archive_delete(sender, instance, **kwargs):
     # print(servers)
     ar = ArchivesRequest(servers)
     ar.delete_archive(instance)
+
 
 @receiver(post_save, sender=Schedule)
 def schedule_save(sender, instance, **kwargs):

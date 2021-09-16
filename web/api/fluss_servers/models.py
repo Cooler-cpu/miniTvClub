@@ -6,9 +6,9 @@ from django.dispatch import receiver
 
 from sortedm2m.fields import SortedManyToManyField
 
-from fluss.service import ArchivesRequest, AuthRequest
+from fluss.service import ArchivesRequest
 
-
+from django.urls import reverse
 
 class ServerAuth(models.Model):
     name = models.CharField(verbose_name="Название бэкенд авторизации", max_length=120, default="name", unique=True)
@@ -114,10 +114,11 @@ class Servers(models.Model):
     def __str__(self):
         return f"{self.name} - {self.fluss_url}"
 
-
     def get_dvrs(self):
         return self.server_dvr.all()
 
+    def get_absolute_url(self):
+        return reverse('server_action', kwargs={'pk': self.pk})
         
 
 

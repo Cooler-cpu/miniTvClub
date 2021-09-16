@@ -9,6 +9,11 @@ from fluss_pipelines.models import Pipelines
 from fluss_servers.serializers import DVRSerializers
 from fluss_servers.models import ServerDvr
 
+#Channels import 
+from .models import Packets
+from .serializers import(
+     PacketSerializer, ChannelSerializer
+)
 
 class GetPipelinesListView(APIView):
     def post(self, request, *args, **kwargs):
@@ -23,3 +28,10 @@ class GetPipelinesListView(APIView):
         serializer = DVRSerializers(archives, many=True)
         data = serializer.data
         return Response(data)
+
+
+class Packet(ListAPIView):
+    queryset = Packets.objects.all()
+    
+    serializer_class = PacketSerializer
+
