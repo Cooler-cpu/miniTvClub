@@ -1,15 +1,9 @@
 version: '3.7'
 
 services:
-  web:
+  backend:
     build: ./api
     volumes:
       - ./api/:/app
-    ports:
-      - ${SITE_PORT}:8000
-    environment:
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
-    env_file:
-      - .env
+  redis:
+      image: "redis:alpine"

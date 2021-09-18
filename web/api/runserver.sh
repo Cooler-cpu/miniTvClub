@@ -1,7 +1,10 @@
-python3 manage.py collectstatic --noinput
+python manage.py collectstatic --noinput
 
-python3 manage.py makemigrations
+python manage.py makemigrations
 
-python3 manage.py migrate
+python manage.py migrate
 
-python3 manage.py runserver 0.0.0.0:8000
+celery -A django_app.celery worker -l info --loglevel=DEBUG &
+celery -A django_app.celery beat -l info --loglevel=DEBUG &
+
+python manage.py runserver 0.0.0.0:8000
