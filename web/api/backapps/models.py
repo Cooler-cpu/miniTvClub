@@ -5,6 +5,8 @@ from django.utils.timezone import now
 from fluss_servers.models import Servers
 from fluss.service import BaseRequest
 
+from django.urls import reverse
+
 class Server(models.Model):
     server = models.ForeignKey(Servers, verbose_name="Сервер", on_delete=models.CASCADE)
 
@@ -20,6 +22,9 @@ class Server(models.Model):
         br = BaseRequest()
         config = br.get_config(self.server)
         ServerBackapps.objects.create(server = self, json = config)
+
+    def get_absolute_url(self):
+        return reverse('server_action', kwargs={'pk': self.pk})
         
 
 class ServerBackapps(models.Model):

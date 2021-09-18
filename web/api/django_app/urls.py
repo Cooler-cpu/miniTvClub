@@ -8,14 +8,14 @@ from .views import Load
 from django.conf.urls import include, url
 
 urlpatterns = [
-    url('server', include(('fluss_servers.urls', 'fluss_servers'), namespace='fluss_servers')),
-    url('backapps', include(('backapps.urls', 'backapps'), namespace='backapps')),
+    path('server/', include('fluss_servers.urls')),
+    path('backapps/', include('backapps.urls')),
     path('grappelli/', include('grappelli.urls')),
     path('_nested_admin/', include('nested_admin.urls')),
     path('admin/', admin.site.urls),
     path('test', Load.as_view()),
-    path('api/', include('channels.urls')),
-    path('', include('fluss_streams.urls')),
+    # path('api/', include('channels.urls')),
+    path('api/', include('fluss_streams.urls')),
     # path('', include('auth.urls'))
 ]
 

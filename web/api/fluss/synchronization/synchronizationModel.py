@@ -3,7 +3,6 @@ from fluss_pipelines.models import Pipelines
 from fluss_streams.models import Streams
 from fluss.service import StreamRequest
 
-
 from datetime import time
 
 class ModelSynchronization(StreamRequest):
@@ -45,8 +44,6 @@ class ModelSynchronization(StreamRequest):
                 dvr = ServerDvr.objects.get(name = dvr.name)
                 dvr.delete()
 
-
-    
     def delete_objects_auths(self, config_auth):
         """
         Удалить все обьекты auth которых нет на медиа сервере, но есть у нас в обьекте сервера
@@ -119,7 +116,7 @@ class ModelSynchronization(StreamRequest):
                     time_arr = []
                     for time_int in dvr_schedule:
                         time_str = str(time_int)
-                        size = len(str(time_str)) + 1
+                        size = len(time_str) + 1
                         if size != 2:
                             timepart_1 = time_str[0:size//2]
                             timepart_2 = time_str[size//2:]
@@ -132,8 +129,6 @@ class ModelSynchronization(StreamRequest):
                             time_obj = time(time_int)
                             time_arr.append(time_obj)
                     Schedule.objects.create(start = time_arr[0], end = time_arr[1], server_dvr = dvr_obj)
-
-
 
     def stream_fields_update(self, config_stream):
         """
@@ -156,7 +151,6 @@ class ModelSynchronization(StreamRequest):
                     stream.status = '1'                
                 stream.save()
 
-    
     def synchronization_objects_streams(self, config_stream):
         """
         Синхронизация обьектов и полей стримов 
@@ -195,53 +189,6 @@ class ModelSynchronization(StreamRequest):
                             'status': status,
                         }
                     )
-
-        
-
-    # def synchronization_objects_streams(self, config_stream):
-    #     """
-    #     Добавляет стрим на все медиа сервера в пайплайне если он есть у нас, но нету на медиа сервере
-    #     """
-
-    #     """
-    #     названия стримов в конфиге медиа сервера
-    #     """
-    #     list_stream_name = [stream for stream in config_stream]
-    #     pipelines = Pipelines.objects.filter(fluss_servers = self.server)
-    #     for pipeline in pipelines:
-    #         """
-    #         названия стримов в системе
-    #         """
-
-    #         list_stream_system = [stream.name for stream in Streams.objects.filter(fluss_pipelines = pipeline)]
-
-    #         """
-    #         разность списков в системе и на медиа сервере
-    #         """
-    #         list_diff = list(set(list_stream_system)-set(list_stream_name))  
-
-    #         for stream_name in list_diff:
-    #             add_stream = Streams.objects.get(name = stream_name)
-    #             sr = StreamRequest(add_stream)
-    #             sr.update_stream()
-            
-    
-    # def synchronization_fields_streams(self, config_stream):
-    #     """
-    #     Синхронизирует поля стрима на медиа сервере
-    #     """
-    #     pipelines = Pipelines.objects.filter(fluss_servers = self.server)
-
-    #     for pipeline in pipelines:
-    #         list_stream_system = [stream.name for stream in Streams.objects.filter(fluss_pipelines = pipeline)]
-        
-    #         for stream_name in list_stream_system:
-                
-    #             stream = Streams.objects.get(name = stream_name)
-    #             sr = StreamRequest(stream)
-    #             sr.update_stream()
-
-
 
     def synchronization_model(self):
         """

@@ -1,7 +1,8 @@
 from django.db import models
 
 from users.models import Users
-from channels.models import Packets
+
+from fluss_streams.models import Packets
 
 from django.utils.timezone import now
 from django.core.exceptions import ValidationError

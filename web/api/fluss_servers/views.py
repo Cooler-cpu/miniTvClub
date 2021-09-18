@@ -1,3 +1,5 @@
+from django.views.generic.base import View
+from rest_framework import views
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework import status
@@ -6,8 +8,32 @@ from django.http import Http404
 
 from fluss.synchronization.synchronizationModel import ModelSynchronization
 from fluss.synchronization.synchronizationMedia import MediaSynchronization
-from .models import Servers
+from .models import ServerAuth, Servers
 
+from fluss.service import BaseRequest
+
+
+def syncServer(url, login, password, pk = None):
+
+    sr = BaseRequest()
+    server, created = Servers.objects.get_or_create(
+        fluss_url = url, 
+        login = login, 
+        password = password
+    )
+    answer = sr.get_config(server)
+    if not answer: 
+        server.delete()
+
+    sync = ModelSynchronization(server = server)
+    try:
+        sync.synchronization_model()
+        res = {'success' : 'Сервер синхронизирован'}
+        return res
+
+    except KeyError:
+        res = {'error' : 'Ошибка синхронизации'}
+        return res
 
 
 class ModelSynchronizationView(APIView):
@@ -19,20 +45,12 @@ class ModelSynchronizationView(APIView):
         """
         data = JSONParser().parse(request)
         url = data["url"]
-        try:
-            server = Servers.objects.get(fluss_url = url)
-        except Servers.DoesNotExist:
-            raise Http404
+        login = data["login"]
+        password = data["password"]
 
-        sync = ModelSynchronization(server = server)
-        try:
-            sync.synchronization_model()
-            res = {'success' : 'Сервер синхронизирован'}
-            return Response(res, status=status.HTTP_200_OK)
+        res = syncServer(url, login, password)
+        return Response(res)
 
-        except KeyError:
-            res = {'error' : 'Ошибка синхронизации'}
-            return Response(res)
 
 
 class MediaSynchronizationView(APIView):
@@ -67,6 +85,13 @@ class MediaSynchronizationView(APIView):
             res = {'error' : 'Ошибка синхронизации'}
             return Response(res)
 
+
+from django.views.generic import DetailView
+
+class ServerAction(DetailView):
+    model = Servers
+
+    template_name = 'fluss_servers/action_server'
 
 
 

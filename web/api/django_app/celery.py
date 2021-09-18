@@ -20,8 +20,8 @@ app.autodiscover_tasks()
 
 
 app.conf.beat_schedule= {
-    'make-dumps-once-a-week' : {
-        'task' : 'fluss_servers.tasks.send_span_email',
-        'schedule': 30.0,
+    'make-synchronization' : {
+        'task' : 'fluss_servers.tasks.make_synchronization',
+        'schedule': crontab(minute='*/1'),
     }
 }
