@@ -17,14 +17,14 @@ class Server(models.Model):
     def __str__(self):
         return f"{self.server}"
 
-    def get_absolute_url(self):
-        return reverse('server_action', kwargs={'pk': self.pk})
-
     def save(self, **kwargs):
         super(Server, self).save()
         br = BaseRequest()
         config = br.get_config(self.server)
         ServerBackapps.objects.create(server = self, json = config)
+
+    def get_absolute_url(self):
+        return reverse('server_action', kwargs={'pk': self.pk})
         
 
 class ServerBackapps(models.Model):

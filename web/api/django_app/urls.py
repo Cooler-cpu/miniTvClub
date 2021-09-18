@@ -9,7 +9,7 @@ from django.conf.urls import include, url
 
 urlpatterns = [
     path('server/', include('fluss_servers.urls')),
-    url('backapps', include(('backapps.urls', 'backapps'), namespace='backapps')),
+    path('backapps/', include('backapps.urls')),
     path('grappelli/', include('grappelli.urls')),
     path('_nested_admin/', include('nested_admin.urls')),
     path('admin/', admin.site.urls),

@@ -190,48 +190,6 @@ class ModelSynchronization(StreamRequest):
                         }
                     )
 
-    # def synchronization_objects_streams(self, config_stream):
-    #     """
-    #     Добавляет стрим на все медиа сервера в пайплайне если он есть у нас, но нету на медиа сервере
-    #     """
-
-    #     """
-    #     названия стримов в конфиге медиа сервера
-    #     """
-    #     list_stream_name = [stream for stream in config_stream]
-    #     pipelines = Pipelines.objects.filter(fluss_servers = self.server)
-    #     for pipeline in pipelines:
-    #         """
-    #         названия стримов в системе
-    #         """
-
-    #         list_stream_system = [stream.name for stream in Streams.objects.filter(fluss_pipelines = pipeline)]
-
-    #         """
-    #         разность списков в системе и на медиа сервере
-    #         """
-    #         list_diff = list(set(list_stream_system)-set(list_stream_name))  
-
-    #         for stream_name in list_diff:
-    #             add_stream = Streams.objects.get(name = stream_name)
-    #             sr = StreamRequest(add_stream)
-    #             sr.update_stream()
-            
-    # def synchronization_fields_streams(self, config_stream):
-    #     """
-    #     Синхронизирует поля стрима на медиа сервере
-    #     """
-    #     pipelines = Pipelines.objects.filter(fluss_servers = self.server)
-
-    #     for pipeline in pipelines:
-    #         list_stream_system = [stream.name for stream in Streams.objects.filter(fluss_pipelines = pipeline)]
-        
-    #         for stream_name in list_stream_system:
-                
-    #             stream = Streams.objects.get(name = stream_name)
-    #             sr = StreamRequest(stream)
-    #             sr.update_stream()
-
     def synchronization_model(self):
         """
         синхронизирует обьекты если их нет на медиа сервере но есть у нас удаляем.

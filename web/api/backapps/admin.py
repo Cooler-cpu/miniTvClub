@@ -22,7 +22,7 @@ class ServerAdmin(AdminRowActionsMixin, nested_admin.NestedModelAdmin):
     def get_row_actions(self, obj):
         row_actions = [
             {
-                'label': 'Edit',
+                'label': 'Активировать синхронизацию',
                 'url': obj.get_absolute_url(),
             }
         ]
