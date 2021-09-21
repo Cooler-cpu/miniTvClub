@@ -27,6 +27,16 @@ class BaseRequest(HeaderRequest):
 			# raise ValidationError("Сервер не работает")
 			return False
 
+	def get_server_api_config(self, server):
+		url = f"{server.fluss_url}/flussonic/api/server"
+		header = self.get_headers(server.login, server.password)
+		try:
+			response = requests.get(url, headers = header)
+			answer = response.json()
+			return answer 
+		except Exception:
+			# raise ValidationError("Сервер не работает")
+			return False
 
 	def send_config(self, server, config):
 		url = f'{server.fluss_url}/flussonic/api/modify_config?async=true'
