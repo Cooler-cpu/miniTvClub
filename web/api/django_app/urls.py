@@ -14,6 +14,7 @@ urlpatterns = [
     path('_nested_admin/', include('nested_admin.urls')),
     path('admin/', admin.site.urls),
     path('test', Load.as_view()),
+    path('api/user/', include('users.urls')),
     # path('api/', include('channels.urls')),
     path('api/', include('fluss_streams.urls')),
     # path('', include('auth.urls'))

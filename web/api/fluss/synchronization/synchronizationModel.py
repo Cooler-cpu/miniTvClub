@@ -157,9 +157,8 @@ class ModelSynchronization(StreamRequest):
         """
         pipelines = Pipelines.objects.filter(fluss_servers = self.server)
 
-        list_stream_name = [stream for stream in config_stream]
-        
         if pipelines:
+            list_stream_name = [stream for stream in config_stream]
             for stream in list_stream_name:
                 for pipeline in pipelines:
                     if config_stream[stream]['static'] == False:
@@ -189,6 +188,27 @@ class ModelSynchronization(StreamRequest):
                             'status': status,
                         }
                     )
+        else:
+            # throw error
+            pass
+            
+            # у нас легли сервера мы их подняли. 
+            # Но у нас есть бэкапы с json 
+            
+            # 1)Если мы знаем что все 10 серверов лежали в одном пайлайне то
+
+            # стримы с него добавляем в этот пайплайн и все сервера синхронизиюртся.
+
+            # 2)Все стримы 
+
+
+            
+            # 1 пайплайн в котором один стрим в котором 10 серверов, у нас 10 слетел сервер
+
+            
+
+
+
 
     def synchronization_model(self):
         """

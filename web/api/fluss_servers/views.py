@@ -90,7 +90,6 @@ from django.views.generic import DetailView
 
 class ServerAction(DetailView):
     model = Servers
-
     template_name = 'fluss_servers/action_server'
 
 

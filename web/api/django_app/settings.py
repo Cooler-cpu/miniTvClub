@@ -37,17 +37,19 @@ INSTALLED_APPS = [
     'django_admin_row_actions',
 
     'users.apps.UsersConfig',
+    'users.referals.apps.ReferalsConfig',
     'fluss_streams.apps.FlussStreamsConfig',
     'fluss_servers.apps.FlussServersConfig',
     'fluss_pipelines.apps.FlussPipelinesConfig',
     #'site_manager.apps.SiteManagerConfig',
-    # 'channels.apps.ChannelsConfig',
+    #'channels.apps.ChannelsConfig',
+    'Settings.apps.SettingsConfig',
+
     'categories.apps.CategoriesConfig',
     'tokens.apps.TokensConfig',
     'playlists.apps.PlaylistsConfig',
     'orders.apps.OrdersConfig',
     'backapps.apps.BackappsConfig'
-
 ]
 
 MIDDLEWARE = [
