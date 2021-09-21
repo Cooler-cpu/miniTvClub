@@ -68,7 +68,7 @@ class Users(AbstractBaseUser, PermissionsMixin):
     referral_count = models.IntegerField(verbose_name="Баланс рефериалов которых может создать", default="1")
 
     bossid = models.IntegerField(verbose_name="Через кого зарегестрировался пользователь", null=True, blank=True)
-    profit = models.FloatField(verbose_name="Процент с покупок рефералов", blank=True)
+    profit = models.FloatField(verbose_name="Процент с покупок рефералов", blank=True, null = True)
 
     last_login_data = models.DateTimeField('Дата последнего подключения ', null=True, blank=True)
     reg_ip = models.GenericIPAddressField(verbose_name="IP регистрации ", null=True, blank=True)
